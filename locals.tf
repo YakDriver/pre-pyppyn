@@ -23,9 +23,5 @@ locals {
     "win08"       = "${data.aws_ami.windows2008.id}"
     "win12"       = "${data.aws_ami.windows2012.id}"
     "win16"       = "${data.aws_ami.windows2016.id}"
-    "win16sql16s" = "${data.aws_ami.win16sql16s.id}"
-    "win16sql16e" = "${data.aws_ami.win16sql16e.id}"
-    "win16sql17s" = "${data.aws_ami.win16sql17s.id}"
-    "win16sql17e" = "${data.aws_ami.win16sql17e.id}"
   }
 }
