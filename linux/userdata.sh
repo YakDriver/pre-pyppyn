@@ -143,7 +143,7 @@ fi
 stage="install wam" && pip install --index-url "$PYPI_URL" --editable .
 
 # Run watchmaker
-stage="run wam" && watchmaker ${tfi_common_args} ${tfi_lx_args}
+# stage="run wam" && watchmaker ${tfi_common_args} ${tfi_lx_args}
 # ----------  end of wam install  ----------
 
 # time it took to install
