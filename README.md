@@ -1,10 +1,9 @@
-![Terrafirm diagram](architecture.png)
-# terrafirm
-Terrafirm launches Windows and Linux instances and installs [Watchmaker](https://github.com/plus3it/watchmaker) to test that it installs and runs.
+# Pyppyn
+Pyppyn builds (or hopefully someday will) Python packages for Windows and Linux to install [Watchmaker](https://github.com/plus3it/watchmaker).
 
-This project is designed to work with [AWS CodeBuild](https://aws.amazon.com/codebuild/). In order to use it, you will need to provide environment variables in your CodeBuild project.
+This project uses [Terraform](https://github.com/hashicorp/terraform) and can work with [AWS CodeBuild](https://aws.amazon.com/codebuild/). You can control some aspects with environment variables.
 
-## ENVIRONMENT VARIABLES EXPECTED BY TERRAFIRM
+## ENVIRONMENT VARIABLES EXPECTED BY Pyppyn
 
 Variable | Default | Req/Opt (in CodeBuild) | Description
 --- | --- | --- | ---

@@ -23,7 +23,7 @@ resource "aws_default_subnet" "tfi" {
 # Security group to access the instances over WinRM
 resource "aws_security_group" "winrm_sg" {
   name        = "${local.resource_name}-winrm"
-  description = "Used in terrafirm"
+  description = "Used in Pyppyn"
   vpc_id      = "${data.aws_subnet.tfi.vpc_id}"
 
   tags {
@@ -50,7 +50,7 @@ resource "aws_security_group" "winrm_sg" {
 # Security group to access the instances over SSH
 resource "aws_security_group" "ssh_sg" {
   name        = "${local.resource_name}-ssh"
-  description = "Used in terrafirm"
+  description = "Used in Pyppyn"
   vpc_id      = "${data.aws_subnet.tfi.vpc_id}"
 
   tags {
