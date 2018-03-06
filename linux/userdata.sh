@@ -102,7 +102,7 @@ trap 'catch $? $${LINENO}' ERR
 # everything below this is the TRY
 
 # start time of install
-start=`date +%s`
+#start=`date +%s`
 
 # declare an array to hold the status (number and message)
 userdata_status=(0 "Success")
@@ -121,7 +121,7 @@ stage="install python/git" && curl "$PIP_URL" | python - --index-url="$PYPI_URL"
 retry 5 yum -y install git
 
 # Upgrade pip and setuptools
-stage="upgrade pip/setuptools/boto3" && pip install --index-url="$PYPI_URL" --upgrade pip setuptools boto3
+stage="upgrade pip/setuptools/boto3" && pip install --index-url="$PYPI_URL" --upgrade pip setuptools boto3 pyinstaller
 
 # Clone watchmaker
 stage="git" && git clone "$GIT_REPO" --recursive
@@ -140,15 +140,15 @@ if [ -n "$GIT_REF" ] ; then
 fi
 
 # Install watchmaker
-stage="install wam" && pip install --index-url "$PYPI_URL" --editable .
+#stage="install wam" && pip install --index-url "$PYPI_URL" --editable .
 
 # Run watchmaker
 # stage="run wam" && watchmaker ${tfi_common_args} ${tfi_lx_args}
 # ----------  end of wam install  ----------
 
 # time it took to install
-end=`date +%s`
-runtime=$((end-start))
-echo "WAM install took $runtime seconds."
+#end=`date +%s`
+#runtime=$((end-start))
+#echo "WAM install took $runtime seconds."
 
 finally
