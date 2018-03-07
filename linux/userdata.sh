@@ -121,7 +121,7 @@ stage="install python/git" && curl "$PIP_URL" | python - --index-url="$PYPI_URL"
 retry 5 yum -y install git
 
 # Upgrade pip and setuptools
-stage="upgrade pip/setuptools/boto3" && pip install --index-url="$PYPI_URL" --upgrade pip setuptools boto3 pyinstaller
+stage="upgrade pip/setuptools/boto3" && pip install --index-url="$PYPI_URL" --upgrade pip setuptools boto3
 
 # Clone watchmaker
 stage="git" && git clone "$GIT_REPO" --recursive
