@@ -103,21 +103,21 @@ resource "aws_instance" "spels" {
     timeout     = "20m"
   }
 
-  provisioner "file" {
-    source      = "linux/watchmaker_test.sh"
-    destination = "~/watchmaker_test.sh"
-  }
+  #provisioner "file" {
+  #  source      = "linux/watchmaker_test.sh"
+  #  destination = "~/watchmaker_test.sh"
+  #}
 
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x ~/watchmaker_test.sh",
-      "~/watchmaker_test.sh",
-    ]
+  #provisioner "remote-exec" {
+  #  inline = [
+  #    "chmod +x ~/watchmaker_test.sh",
+  #    "~/watchmaker_test.sh",
+  #  ]
 
-    connection {
-      script_path = "~/inline.sh"
-    }
-  }
+  #  connection {
+  #    script_path = "~/inline.sh"
+  #  }
+  #}
 }
 
 # bread & butter - this tells TF to provision/create the actual instance
@@ -148,14 +148,14 @@ resource "aws_instance" "windows" {
     timeout  = "20m"
   }
 
-  provisioner "file" {
-    source      = "windows/watchmaker_test.ps1"
-    destination = "C:\\scripts\\watchmaker_test.ps1"
-  }
+  #provisioner "file" {
+  #  source      = "windows/watchmaker_test.ps1"
+  #  destination = "C:\\scripts\\watchmaker_test.ps1"
+  #}
 
-  provisioner "remote-exec" {
-    inline = [
-      "powershell.exe -File C:\\scripts\\watchmaker_test.ps1",
-    ]
-  }
+  #provisioner "remote-exec" {
+  #  inline = [
+  #    "powershell.exe -File C:\\scripts\\watchmaker_test.ps1",
+  #  ]
+  #}
 }
