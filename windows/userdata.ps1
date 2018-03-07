@@ -155,20 +155,15 @@ Try {
   }
 
   # Install watchmaker
-  $Stage = "install wam"
   Test-Command "pip install --index-url `"$PypiUrl`" --editable ."
 
-  # Run watchmaker
-  $Stage = "run wam"
-  #Invoke-Expression -Command "watchmaker ${tfi_common_args} ${tfi_win_args}" -ErrorAction Stop
-  #Test-Command "watchmaker ${tfi_common_args} ${tfi_win_args}"
-  # ----------  end of wam install ----------
+  Test-Command "pip install pyinstaller"
 
-  $EndDate = Get-Date
-  Tfi-Out("WAM install took {0} seconds." -f [math]::Round(($EndDate - $StartDate).TotalSeconds))
-  Tfi-Out("End install")
+  Test-Command "xcopy C:\Windows\System32\watchmaker\* C:\watchmaker /s /e"
+  
+  cd C:\watchmaker\src\watchmaker
 
-  $UserdataStatus=@(0,"Success") # made it this far, it's a success
+  Test-Command "pyinstaller --onfile __main__.py"
 }
 Catch
 {
@@ -176,58 +171,9 @@ Catch
   Tfi-Out ("*** ERROR caught ($Stage) ***")
   Tfi-Out $ErrorMessage
 
-  # setup userdata status for passing to the test script via a file
-  $ErrCode = 1  # trying to set this to $lastExitCode does not work (always get 0)
-  $UserdataStatus=@($ErrCode,"Error at: " + $Stage + " [$ErrorMessage]")
 }
 
-# Set Administrator password - should always go after wm install because username not yet changed
-$Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
-$Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
-Tfi-Out "Set admin password" $?
-
-If (Test-Path -path "C:\salt\salt-call.bat")
-{
-  # fix the lgpos to allow winrm
-  C:\salt\salt-call --local -c C:\Watchmaker\salt\conf lgpo.set_reg_value `
-    key='HKLM\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\AllowBasic' `
-    value='1' `
-    vtype='REG_DWORD'
-  Tfi-Out "Salt modify lgpo, allow basic" $?
-
-  C:\salt\salt-call --local -c C:\Watchmaker\salt\conf lgpo.set_reg_value `
-    key='HKLM\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\AllowUnencryptedTraffic' `
-    value='1' `
-    vtype='REG_DWORD'
-  Tfi-Out "Salt modify lgpo, unencrypted" $?
-}
-Else
-{
-  # if salt isn't around to open winrm because of an error, use the old fashioned method
-  Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
-  Tfi-Out "Open winrm/unencrypted without salt" $?
-  Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
-  Tfi-Out "Open winrm/auth/basic without salt" $?
-}
-
-Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}"
-Tfi-Out "Set winrm timeout" $?
-
-# in case wam didn't change admin account name, winrm won't be able to log in so let's change it ourselves
-$Admin = [adsi]("WinNT://./Administrator, user")
-If ($Admin.Name)
-{
-  $Admin.psbase.rename("${tfi_rm_user}")
-  Tfi-Out "Rename admin account" $?
-}
-
-# write the status to a file for reading by test script
-$UserdataStatus | Out-File C:\Temp\userdata_status
-Tfi-Out "Write userdata status file" $?
-
-# open firewall for winrm - rule was added previously, now we modify it with "set"
-netsh advfirewall firewall set rule name="WinRM in" new action=allow
-Tfi-Out "Open firewall" $?
+$ErrorActionPreference = "Continue"
 
 # upload logs to S3 bucket
 $S3Keyfix="Win" + (((Get-WmiObject -class Win32_OperatingSystem).Caption) -replace '.+(\d\d)\s(.{2}).+','$1$2')
@@ -236,10 +182,10 @@ If ($S3Keyfix.Substring($S3Keyfix.get_Length()-2) -eq 'Da') {
 }
 
 $ArtifactPrefix = "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$S3Keyfix"
+Tfi-Out "Copying executable to $ArtifactPrefix"
+Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}/$ArtifactPrefix/watchmaker.exe`" -File `"C:\watchmaker\src\watchmaker\dist\__main__.exe`""
+
 Tfi-Out "Writing logs to $ArtifactPrefix"
-
-$ErrorActionPreference = "Continue"
-
 Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}/$ArtifactPrefix`" -File `"${tfi_win_userdata_log}`""
 Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}`" -Folder `"C:\\Watchmaker\\Logs`" -KeyPrefix `"$ArtifactPrefix/watchmaker/`" -SearchPattern `"*log`""
 Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}`" -Folder `"C:\\Watchmaker\\SCAP\\Results`" -KeyPrefix `"$ArtifactPrefix/scap_output/`" -Recurse"
