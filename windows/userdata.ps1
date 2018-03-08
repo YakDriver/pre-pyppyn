@@ -167,7 +167,9 @@ Try {
 
   Test-Command "pyinstaller --onefile __main__.py"
 
-  Test-Command "ren dist\__main__.exe dist\watchmaker.exe"
+  cd dist
+
+  Test-Command "ren __main__.exe watchmaker.exe"
 }
 Catch
 {
