@@ -1,6 +1,6 @@
 <powershell>
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 
 function Tfi-Out
 {
@@ -159,11 +159,13 @@ Try {
 
   Test-Command "pip install pyinstaller"
 
-  Test-Command "xcopy C:\Windows\System32\watchmaker\* C:\watchmaker /s /e"
+  mkdir C:\watchmaker\
+
+  Test-Command "xcopy C:\Windows\System32\watchmaker\* C:\watchmaker\ /s /e /i"
   
   cd C:\watchmaker\src\watchmaker
 
-  Test-Command "pyinstaller --onfile __main__.py"
+  Test-Command "pyinstaller --onefile __main__.py"
 }
 Catch
 {
