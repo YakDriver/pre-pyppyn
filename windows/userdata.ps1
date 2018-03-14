@@ -46,7 +46,8 @@ function Test-Command
     {
       $Result = @{}
       # Invokes commands and in the same context captures the $? and $LastExitCode
-      Invoke-Expression -Command ($Test+';$Result = @{ Success = $?; ExitCode = $LastExitCode }')
+      Invoke-Expression -Command ($Test+';$Result = @{ Success = $?; ExitCode = $LastExitCode }') | Out-String -OutVariable CommandOutput
+      Tfi-Out $CommandOutput
       If (($False -eq $Result.Success) -Or ((($Result.ExitCode) -ne $null) -And (0 -ne ($Result.ExitCode)) ))
       {
         Throw $MsgFailed
@@ -130,12 +131,6 @@ Try {
       -GitUrl "$GitUrl" `
       -Verbose -ErrorAction Stop
 
-  Tfi-Out "Security protocol after bootstrap: $([Net.ServicePointManager]::SecurityProtocol | Out-String)"
-
-  # Upgrade pip and setuptools
-  $Stage = "upgrade pip setuptools boto3"
-  Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
-
   # Clone watchmaker
   $Stage = "git"
   Test-Command "git clone `"$GitRepo`" --recursive" -Tries 2
@@ -154,22 +149,22 @@ Try {
     }
   }
 
-  # Install watchmaker
-  Test-Command "pip install --index-url `"$PypiUrl`" --editable ."
+  Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip pip3 setuptools boto3" -Tries 2
 
-  Test-Command "pip install pyinstaller"
+  Test-Command "python3 -m venv venv"
+  Test-Command "source venv/bin/activate"
 
-  mkdir C:\watchmaker\
+  Test-Command "pip3 install -r requirements/developer.pip"
+  Test-Command "pip3 install pyinstaller"
 
-  Test-Command "xcopy C:\Windows\System32\watchmaker\* C:\watchmaker\ /s /e /i"
   
-  cd C:\watchmaker\src\watchmaker
+  #cd C:\watchmaker\src\watchmaker
 
-  Test-Command "pyinstaller --onefile __main__.py"
+  #Test-Command "pyinstaller --onefile __main__.py"
 
-  cd dist
+  #cd dist
 
-  Test-Command "ren __main__.exe watchmaker.exe"
+  #Test-Command "ren __main__.exe watchmaker.exe"
 }
 Catch
 {
