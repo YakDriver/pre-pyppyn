@@ -132,7 +132,8 @@ Try {
       -Verbose -ErrorAction Stop
 
   # Clone watchmaker
-  $Stage = "git"
+  mkdir C:\git
+  cd C:\git
   Test-Command "git clone `"$GitRepo`" --recursive" -Tries 2
   cd watchmaker
   If ($GitRef)
@@ -149,12 +150,11 @@ Try {
     }
   }
 
-  Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip pip3 setuptools boto3" -Tries 2
+  Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
 
-  Test-Command "python3 -m venv venv"
-  Test-Command "source venv/bin/activate"
+  Test-Command "python -m venv venv"
+  Test-Command "C:\git\watchmaker\venv\scripts\activate"
 
-  Test-Command "pip3 install -r requirements/developer.pip"
   Test-Command "pip3 install pyinstaller"
 
   
