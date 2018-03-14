@@ -150,14 +150,19 @@ Try {
     }
   }
 
-  Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
-
   Test-Command "python -m venv venv"
   Test-Command "C:\git\watchmaker\venv\scripts\activate"
-
-  Test-Command "pip3 install pyinstaller"
-
   
+  Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
+  #Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml"
+  Test-Command "pip install --index-url=`"$PypiUrl`" --editable ."
+
+  cd C:\git
+  Test-Command "git clone https://github.com/YakDriver/pyppyn.git"
+  cd pyppyn\pyinstaller
+  copy C:\git\watchmaker\venv\Scripts\watchmaker-script.py .
+  Test-Command "python generate-standalone.py"
+
   #cd C:\watchmaker\src\watchmaker
 
   #Test-Command "pyinstaller --onefile __main__.py"
