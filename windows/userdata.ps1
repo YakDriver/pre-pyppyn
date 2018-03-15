@@ -223,11 +223,11 @@ If ($S3Keyfix.Substring($S3Keyfix.get_Length()-2) -eq 'Da') {
 
 $ArtifactPrefix = "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$S3Keyfix"
 Tfi-Out "Copying executable to $ArtifactPrefix"
-#Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}/$ArtifactPrefix`" -File `"C:\watchmaker\src\watchmaker\dist\watchmaker.exe`""
+Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "$ArtifactPrefix/dist/" -SearchPattern *.zip
 
 Tfi-Out "Writing logs to $ArtifactPrefix"
-Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}/$ArtifactPrefix`" -File `"${tfi_win_userdata_log}`""
-Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}`" -Folder `"C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Log`" -KeyPrefix `"$ArtifactPrefix/cloud/`""
-Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}`" -Folder `"C:\\Program Files\\Amazon\\Ec2ConfigService\\Logs`" -KeyPrefix `"$ArtifactPrefix/cloud/`""
+Write-S3Object -BucketName "${tfi_s3_bucket}/$ArtifactPrefix" -File "${tfi_win_userdata_log}"
+Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Log" -KeyPrefix "$ArtifactPrefix/cloud/"
+Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "C:\\Program Files\\Amazon\\Ec2ConfigService\\Logs" -KeyPrefix "$ArtifactPrefix/cloud/"
 
 </powershell>
