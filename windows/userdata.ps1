@@ -155,12 +155,20 @@ Try {
   
   Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
   #Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml"
-  Test-Command "pip install --index-url=`"$PypiUrl`" --editable ."
+  cd C:\git\watchmaker
+  Test-Command "pip install --editable ."
+
+  If(-not Test-Path -Path "C:\git\watchmaker\venv\Scripts\watchmaker-script.py")
+  {
+    Tfi-Out "ERROR: watchmaker did not install correctly"
+  }
 
   cd C:\git
   Test-Command "git clone https://github.com/YakDriver/pyppyn.git"
-  cd pyppyn\pyinstaller
-  copy C:\git\watchmaker\venv\Scripts\watchmaker-script.py .
+
+  copy C:\git\watchmaker\venv\Scripts\watchmaker-script.py C:\git\pyppyn\pyinstaller
+
+  cd C:\git\pyppyn\pyinstaller
   Test-Command "python generate-standalone.py"
 
   #cd C:\watchmaker\src\watchmaker
