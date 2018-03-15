@@ -159,11 +159,12 @@ Try {
   
   Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
   cd C:\git\watchmaker
+  Tfi-Out "Installing watchmaker distribution"
   Test-Command "pip install --editable ."
 
   Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml"
 
-  If(Test-Path -Path "C:\git\watchmaker\venv\Scripts\watchmaker-script.py")
+  If(Test-Path -Path "C:\git\pyppyn\venv\Scripts\watchmaker-script.py")
   {
     Tfi-Out "watchmaker installed correctly"
   }
@@ -174,11 +175,11 @@ Try {
     Test-Command "pip install --editable ."
   }
 
-  If(Test-Path -Path "C:\git\watchmaker\venv\Scripts\watchmaker-script.py")
+  If(Test-Path -Path "C:\git\pyppyn\venv\Scripts\watchmaker-script.py")
   {
     Tfi-Out "Building standalone"
 
-    copy C:\git\watchmaker\venv\Scripts\watchmaker-script.py C:\git\pyppyn\pyinstaller
+    copy C:\git\pyppyn\venv\Scripts\watchmaker-script.py C:\git\pyppyn\pyinstaller
 
     cd C:\git\pyppyn\pyinstaller
     Test-Command "python generate-standalone.py"
