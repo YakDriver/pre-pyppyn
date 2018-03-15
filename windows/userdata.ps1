@@ -197,7 +197,7 @@ If ($S3Keyfix.Substring($S3Keyfix.get_Length()-2) -eq 'Da') {
 
 $ArtifactPrefix = "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$S3Keyfix"
 Tfi-Out "Copying executable to $ArtifactPrefix"
-Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}/$ArtifactPrefix`" -File `"C:\watchmaker\src\watchmaker\dist\watchmaker.exe`""
+#Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}/$ArtifactPrefix`" -File `"C:\watchmaker\src\watchmaker\dist\watchmaker.exe`""
 
 Tfi-Out "Writing logs to $ArtifactPrefix"
 Test-Command "Write-S3Object -BucketName `"${tfi_s3_bucket}/$ArtifactPrefix`" -File `"${tfi_win_userdata_log}`""
