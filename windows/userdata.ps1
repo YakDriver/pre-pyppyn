@@ -132,6 +132,7 @@ Try {
       -Verbose -ErrorAction Stop
 
   # Clone watchmaker
+  Tfi-Out "Cloning watchmaker..."
   mkdir C:\git
   cd C:\git
   Test-Command "git clone `"$GitRepo`" --recursive" -Tries 2
@@ -150,20 +151,28 @@ Try {
     }
   }
 
+  Tfi-Out "Cloning pyppyn..."
   cd C:\git
   Test-Command "git clone https://github.com/YakDriver/pyppyn.git"
   cd C:\git\pyppyn  
 
+  Tfi-Out "Creating virtual environment..."
   Test-Command "python -m venv venv"
-  Test-Command "C:\git\pyppyn\venv\scripts\activate"
+  cd C:\git\pyppyn\venv\Scripts
+  Test-Command ".\activate"
+  Test-Command "python -c `"import sys; print('Inside venv' if sys.base_prefix != sys.prefix else 'Outside venv')`""
   
+  Tfi-Out "Installing pre-requisities for watchmaker..."
   Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
-  cd C:\git\watchmaker
-  Tfi-Out "Installing watchmaker distribution"
-  Test-Command "pip install --editable ."
 
+  Tfi-Out "Installing watchmaker distribution..."
+  cd C:\git\watchmaker
+  Test-Command "pip install --index-url=`"$PypiUrl`" --editable ."
+
+  Tfi-Out "Install pyinstaller..."
   Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml"
 
+  Tfi-Out "Verifying installation..."
   If(Test-Path -Path "C:\git\pyppyn\venv\Scripts\watchmaker-script.py")
   {
     Tfi-Out "watchmaker installed correctly"
@@ -175,9 +184,10 @@ Try {
     Test-Command "pip install --editable ."
   }
 
+  Tfi-Out "Re-verifying installation..."
   If(Test-Path -Path "C:\git\pyppyn\venv\Scripts\watchmaker-script.py")
   {
-    Tfi-Out "Building standalone"
+    Tfi-Out "Building standalone..."
 
     copy C:\git\pyppyn\venv\Scripts\watchmaker-script.py C:\git\pyppyn\pyinstaller
 
