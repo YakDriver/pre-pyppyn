@@ -158,7 +158,7 @@ Try {
   cd C:\git\watchmaker
   Test-Command "pip install --editable ."
 
-  If(-not Test-Path -Path "C:\git\watchmaker\venv\Scripts\watchmaker-script.py")
+  If(-Not (Test-Path -Path "C:\git\watchmaker\venv\Scripts\watchmaker-script.py"))
   {
     Tfi-Out "ERROR: watchmaker did not install correctly"
   }
