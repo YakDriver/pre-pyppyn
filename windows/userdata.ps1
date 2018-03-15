@@ -150,26 +150,41 @@ Try {
     }
   }
 
+  cd C:\git
+  Test-Command "git clone https://github.com/YakDriver/pyppyn.git"
+  cd C:\git\pyppyn  
+
   Test-Command "python -m venv venv"
-  Test-Command "C:\git\watchmaker\venv\scripts\activate"
+  Test-Command "C:\git\pyppyn\venv\scripts\activate"
   
   Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
-  #Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml"
   cd C:\git\watchmaker
   Test-Command "pip install --editable ."
 
-  If(-Not (Test-Path -Path "C:\git\watchmaker\venv\Scripts\watchmaker-script.py"))
+  Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml"
+
+  If(Test-Path -Path "C:\git\watchmaker\venv\Scripts\watchmaker-script.py")
   {
-    Tfi-Out "ERROR: watchmaker did not install correctly"
+    Tfi-Out "watchmaker installed correctly"
+  }
+  Else
+  {
+    Tfi-Out "ERROR: watchmaker did not install correctly (try 1)"
+    cd C:\git\watchmaker
+    Test-Command "pip install --editable ."
   }
 
-  cd C:\git
-  Test-Command "git clone https://github.com/YakDriver/pyppyn.git"
+  If(Test-Path -Path "C:\git\watchmaker\venv\Scripts\watchmaker-script.py")
+  {
+    Tfi-Out "Building standalone"
 
-  copy C:\git\watchmaker\venv\Scripts\watchmaker-script.py C:\git\pyppyn\pyinstaller
+    copy C:\git\watchmaker\venv\Scripts\watchmaker-script.py C:\git\pyppyn\pyinstaller
 
-  cd C:\git\pyppyn\pyinstaller
-  Test-Command "python generate-standalone.py"
+    cd C:\git\pyppyn\pyinstaller
+    Test-Command "python generate-standalone.py"
+  }
+
+
 
   #cd C:\watchmaker\src\watchmaker
 
