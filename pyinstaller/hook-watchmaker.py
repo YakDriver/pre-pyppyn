@@ -1,5 +1,5 @@
 from PyInstaller.utils.hooks import copy_metadata, collect_data_files, collect_submodules
-import os
+import platform
 
 hiddenimports = (
     collect_submodules('watchmaker')
@@ -36,7 +36,7 @@ datas += copy_metadata('backoff')
 #datas += copy_metadata('watchmaker.workers')
 #datas += collect_data_files('watchmaker.workers')
 
-if operating_system.lower() == 'linux':
+if platform.system().lower() == 'linux':
     datas.append(('/var/opt/git/watchmaker/src/watchmaker/static', './watchmaker/static'))
 else:
     datas += copy_metadata('pypiwin32')
