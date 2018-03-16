@@ -20,6 +20,7 @@ phases:
   post_build:
     commands:
       - ./terraform output                                                      # save/display output information to file
+      - ./terraform output private_key | aws s3 cp - "s3://${TF_VAR_tfi_s3_bucket}/$(./terraform output build_date_ymd)/$(./terraform output build_date_hm)_$(./terraform output build_id)/temp_key.pem" || true
       - ./terraform output | aws s3 cp - "s3://${TF_VAR_tfi_s3_bucket}/$(./terraform output build_date_ymd)/$(./terraform output build_date_hm)_$(./terraform output build_id)/terraform_output.txt" || true
       - |
         if [ "${TFI_DESTROY_AFTER_TEST}" = "true" ]; then                       # destroy resources
