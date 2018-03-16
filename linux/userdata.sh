@@ -115,16 +115,15 @@ PIP_URL=https://bootstrap.pypa.io/get-pip.py
 PYPI_URL=https://pypi.org/simple
 
 # Install pip
-stage="install python/git" && curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
+curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
 
 # Install git
 retry 5 yum -y install git
 
-# Upgrade pip and setuptools
-stage="upgrade pip/setuptools/boto3" && pip install --index-url="$PYPI_URL" --upgrade pip setuptools boto3
-
 # Clone watchmaker
-stage="git" && git clone "$GIT_REPO" --recursive
+mkdir ~/git
+cd ~/git
+git clone "$GIT_REPO" --recursive
 cd watchmaker
 if [ -n "$GIT_REF" ] ; then
   # decide whether to switch to pull request or a branch
@@ -137,6 +136,47 @@ if [ -n "$GIT_REF" ] ; then
     stage="git ref (Repo: $GIT_REPO, Ref: $GIT_REF)"
     git checkout $GIT_REF
   fi
+fi
+
+echo "Cloning pyppyn..."
+cd ~/git
+git clone https://github.com/YakDriver/pyppyn.git
+cd ~/git/pyppyn  
+
+echo "Creating virtual environment..."
+python -m venv venv
+venv_bin="~/git/pyppyn/venv/bin"
+cd "$${venv_bin}"
+./activate
+python -c "import sys; print('Inside venv' if sys.base_prefix != sys.prefix else 'Outside venv')"
+
+echo "Installing pre-requisities for watchmaker..."
+pip install --index-url="$PYPI_URL" --upgrade pip setuptools boto3
+
+echo "Installing watchmaker distribution..."
+cd ~/git/watchmaker
+pip install --index-url="$PYPI_URL" --editable .
+
+echo "Install pyinstaller..."
+pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml
+
+echo "Verifying installation..."
+if [ -f "$${venv_bin}/watchmaker-script.py" ]; then
+  echo "watchmaker installed correctly"
+else
+  echo "ERROR: watchmaker did not install correctly (try 1)"
+  cd ~/git/watchmaker
+  pip install --editable .
+fi
+
+echo "Re-verifying installation..."
+if [ -f "$${venv_bin}/watchmaker-script.py" ]; then
+  echo "Building standalone..."
+
+  cp "$${venv_bin}/watchmaker-script.py" ~/git/pyppyn/pyinstaller
+
+  cd ~/git/pyppyn/pyinstaller
+  python generate-standalone.py
 fi
 
 # Install watchmaker

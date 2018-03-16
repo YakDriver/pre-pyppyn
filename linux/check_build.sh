@@ -33,7 +33,7 @@ trap 'catch $? ${LINENO}' ERR
 # everything below this is the TRY
 
 echo "*****************************************************************************"
-echo "Running Watchmaker test script: LINUX"
+echo "Checking build: LINUX"
 echo "*****************************************************************************"
 cat /etc/redhat-release # this will only work for redhat and centos
 
@@ -50,10 +50,9 @@ fi
 test_status=(0 "Not run")
 
 if [ "${userdata_status[0]}" -eq 0 ] ; then
-  # userdata was successful so now try the watchmaker tests
-  # put the tests between the dashed comments
+  # userdata was successful so now check the build
   # ------------------------------------------------------------ WAM TESTS BEGIN
-  watchmaker --version 
+  # move the binary to s3 ?
   
   # ------------------------------------------------------------ WAM TESTS END
   
