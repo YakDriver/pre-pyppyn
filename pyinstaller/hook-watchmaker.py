@@ -1,4 +1,5 @@
 from PyInstaller.utils.hooks import copy_metadata, collect_data_files, collect_submodules
+import os
 
 hiddenimports = (
     collect_submodules('watchmaker')
@@ -14,7 +15,6 @@ hiddenimports = (
 )
 datas = copy_metadata('watchmaker')
 datas += collect_data_files('watchmaker')
-datas += copy_metadata('pypiwin32')
 datas += copy_metadata('defusedxml')
 datas += copy_metadata('PyYAML')
 datas += copy_metadata('six')
@@ -36,7 +36,10 @@ datas += copy_metadata('backoff')
 #datas += copy_metadata('watchmaker.workers')
 #datas += collect_data_files('watchmaker.workers')
 
-datas.append(('C:/git/watchmaker/src/watchmaker/static', './watchmaker/static'))
-#datas.append(('setup.cfg', './'))
-#datas.append(('src/watchmaker', './watchmaker'))
+if operating_system.lower() == 'linux':
+    datas.append(('/var/opt/git/watchmaker/src/watchmaker/static', './watchmaker/static'))
+else:
+    datas += copy_metadata('pypiwin32')
+    datas.append(('C:/git/watchmaker/src/watchmaker/static', './watchmaker/static'))
+
 

@@ -16,34 +16,63 @@ if __name__ == '__main__':
         operating_system = 'OSX'
     machine_type = platform.machine()
 
-    subprocess.run(
-        [
-            'pyinstaller',
-            '--noconfirm',
-            #'--clean',
-            '--name', 'watchmaker',
-            '--paths', 'C:\\git\\watchmaker\\src',
-            #'--paths', 'C:\\git\\watchmaker\\src\\watchmaker.egg-info',
-            '--additional-hooks-dir', 'C:\\git\\pyppyn\\pyinstaller',
-            # This hidden import is introduced by botocore.
-            # We won't need this when this issue is resolved:
-            # https://github.com/pyinstaller/pyinstaller/issues/1844
-            '--hidden-import', 'html.parser',
-            # This hidden import is also introduced by botocore.
-            # It appears to be related to this issue:
-            # https://github.com/pyinstaller/pyinstaller/issues/1935
-            '--hidden-import', 'configparser',
-            '--hidden-import', 'watchmaker',
-            '--hidden-import', 'backoff',
-            '--hidden-import', 'click',
-            '--hidden-import', 'defusedxml',
-            '--hidden-import', 'six',
-            '--hidden-import', 'PyYAML',
-            '--hidden-import', 'pypiwin32',
-            '--hidden-import', 'pkg_resources',
-            'watchmaker-script.py'
-        ],
-        check=True)
+    if operating_system.lower() == 'linux':
+        subprocess.run(
+            [
+                'pyinstaller',
+                '--noconfirm',
+                #'--clean',
+                '--name', 'watchmaker',
+                '--paths', '/var/opt/git/watchmaker/src',
+                #'--paths', 'C:\\git\\watchmaker\\src\\watchmaker.egg-info',
+                '--additional-hooks-dir', '/var/opt/git/pyppyn/pyinstaller',
+                # This hidden import is introduced by botocore.
+                # We won't need this when this issue is resolved:
+                # https://github.com/pyinstaller/pyinstaller/issues/1844
+                '--hidden-import', 'html.parser',
+                # This hidden import is also introduced by botocore.
+                # It appears to be related to this issue:
+                # https://github.com/pyinstaller/pyinstaller/issues/1935
+                '--hidden-import', 'configparser',
+                '--hidden-import', 'watchmaker',
+                '--hidden-import', 'backoff',
+                '--hidden-import', 'click',
+                '--hidden-import', 'defusedxml',
+                '--hidden-import', 'six',
+                '--hidden-import', 'PyYAML',
+                '--hidden-import', 'pkg_resources',
+                'watchmaker-script.py'
+            ],
+            check=True)
+    else:
+        subprocess.run(
+            [
+                'pyinstaller',
+                '--noconfirm',
+                #'--clean',
+                '--name', 'watchmaker',
+                '--paths', 'C:\\git\\watchmaker\\src',
+                #'--paths', 'C:\\git\\watchmaker\\src\\watchmaker.egg-info',
+                '--additional-hooks-dir', 'C:\\git\\pyppyn\\pyinstaller',
+                # This hidden import is introduced by botocore.
+                # We won't need this when this issue is resolved:
+                # https://github.com/pyinstaller/pyinstaller/issues/1844
+                '--hidden-import', 'html.parser',
+                # This hidden import is also introduced by botocore.
+                # It appears to be related to this issue:
+                # https://github.com/pyinstaller/pyinstaller/issues/1935
+                '--hidden-import', 'configparser',
+                '--hidden-import', 'watchmaker',
+                '--hidden-import', 'backoff',
+                '--hidden-import', 'click',
+                '--hidden-import', 'defusedxml',
+                '--hidden-import', 'six',
+                '--hidden-import', 'PyYAML',
+                '--hidden-import', 'pypiwin32',
+                '--hidden-import', 'pkg_resources',
+                'watchmaker-script.py'
+            ],
+            check=True)
 
     shutil.make_archive(
         base_name=os.path.join(

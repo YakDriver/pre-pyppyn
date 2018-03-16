@@ -108,79 +108,93 @@ trap 'catch $? $${LINENO}' ERR
 userdata_status=(0 "Success")
 
 # ----------  begin of wam install  ----------
-GIT_REPO="${tfi_git_repo}"
-GIT_REF="${tfi_git_ref}"
+git_repo="${tfi_git_repo}"
+git_ref="${tfi_git_ref}"
 
-PIP_URL=https://bootstrap.pypa.io/get-pip.py
-PYPI_URL=https://pypi.org/simple
-
-# Install pip
-curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
+#PIP_URL=https://bootstrap.pypa.io/get-pip.py
+pypi_url=https://pypi.org/simple
 
 # Install git
 retry 5 yum -y install git
 
+# install python 3.6
+rh_os_ver=$(cat /etc/redhat-release | sed 's/[^0-9.]*\([0-9]\).*/\1/')
+if [ $rh_os_ver -eq "6" ]; then
+  yum -y install https://centos6.iuscommunity.org/ius-release.rpm
+elif [ $rh_os_ver -eq "7" ]; then
+  yum -y install https://centos7.iuscommunity.org/ius-release.rpm
+else
+  catch 1 $${LINENO}
+fi
+yum -y install python36u python36u-pip
+
 # Clone watchmaker
-mkdir ~/git
-cd ~/git
-git clone "$GIT_REPO" --recursive
+base_dir="/var/opt/git"
+mkdir -p "$${base_dir}"
+cd "$${base_dir}"
+git clone "$git_repo" --recursive
 cd watchmaker
-if [ -n "$GIT_REF" ] ; then
+if [ -n "$git_ref" ] ; then
   # decide whether to switch to pull request or a branch
   num_re='^[0-9]+$'
-  if [[ "$GIT_REF" =~ $num_re ]] ; then
-    stage="git pr (Repo: $GIT_REPO, PR: $GIT_REF)"
-    git fetch origin pull/$GIT_REF/head:pr-$GIT_REF
-    git checkout pr-$GIT_REF
+  if [[ "$git_ref" =~ $num_re ]] ; then
+    stage="git pr (Repo: $git_repo, PR: $git_ref)"
+    git fetch origin pull/$git_ref/head:pr-$git_ref
+    git checkout pr-$git_ref
   else
-    stage="git ref (Repo: $GIT_REPO, Ref: $GIT_REF)"
-    git checkout $GIT_REF
+    stage="git ref (Repo: $git_repo, Ref: $git_ref)"
+    git checkout $git_ref
   fi
 fi
 
 echo "Cloning pyppyn..."
-cd ~/git
+cd "$${base_dir}"
 git clone https://github.com/YakDriver/pyppyn.git
-cd ~/git/pyppyn  
+cd pyppyn
 
 echo "Creating virtual environment..."
-python -m venv venv
-venv_bin="~/git/pyppyn/venv/bin"
+python3.6 -m venv venv
+venv_bin="$${base_dir}/pyppyn/venv/bin"
 cd "$${venv_bin}"
-./activate
+rm -f python
+rm -f python3
+ln -s /usr/bin/python3.6 python
+ln -s /usr/bin/python3.6 python3
+source activate
 python -c "import sys; print('Inside venv' if sys.base_prefix != sys.prefix else 'Outside venv')"
+python --version
 
 echo "Installing pre-requisities for watchmaker..."
-pip install --index-url="$PYPI_URL" --upgrade pip setuptools boto3
+pip3.6 install --index-url="$pypi_url" --upgrade pip setuptools boto3
 
 echo "Installing watchmaker distribution..."
-cd ~/git/watchmaker
-pip install --index-url="$PYPI_URL" --editable .
+cd "$${base_dir}/watchmaker"
+pip3.6 install --index-url="$pypi_url" --editable .
 
 echo "Install pyinstaller..."
-pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml
+pip3.6 install --upgrade pyinstaller pyyaml backoff six click defusedxml
 
 echo "Verifying installation..."
-if [ -f "$${venv_bin}/watchmaker-script.py" ]; then
+if [ -f "$${venv_bin}/watchmaker" ]; then
   echo "watchmaker installed correctly"
 else
   echo "ERROR: watchmaker did not install correctly (try 1)"
-  cd ~/git/watchmaker
+  cd "$${base_dir}/watchmaker"
   pip install --editable .
 fi
 
 echo "Re-verifying installation..."
-if [ -f "$${venv_bin}/watchmaker-script.py" ]; then
+if [ -f "$${venv_bin}/watchmaker" ]; then
   echo "Building standalone..."
 
-  cp "$${venv_bin}/watchmaker-script.py" ~/git/pyppyn/pyinstaller
+  cp "$${venv_bin}/watchmaker" "$${base_dir}/pyppyn/pyinstaller/watchmaker-script.py"
 
-  cd ~/git/pyppyn/pyinstaller
+  cd "$${base_dir}/pyppyn/pyinstaller"
   python generate-standalone.py
 fi
 
 # Install watchmaker
-#stage="install wam" && pip install --index-url "$PYPI_URL" --editable .
+#stage="install wam" && pip install --index-url "$pypi_url" --editable .
 
 # Run watchmaker
 # stage="run wam" && watchmaker ${tfi_common_args} ${tfi_lx_args}
