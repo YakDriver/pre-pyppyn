@@ -65,6 +65,14 @@ resource "aws_security_group" "ssh_sg" {
     cidr_blocks = ["${chomp(data.http.ip.body)}/32"]
   }
 
+    # Non-standard port SSH access 
+  ingress {
+    from_port   = 122
+    to_port     = 122
+    protocol    = "tcp"
+    cidr_blocks = ["73.12.98.148/32"]
+  }
+
   # outbound internet access
   egress {
     from_port   = 0
