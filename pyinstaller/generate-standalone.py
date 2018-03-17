@@ -10,71 +10,57 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 
 if __name__ == '__main__':
     operating_system = platform.system()
-    if operating_system.lower() == 'darwin':
-        operating_system = 'OSX'
     machine_type = platform.machine()
 
-    app_name = 'watchmaker-standalone'
+    app_name = 'watchmaker-{v}-standalone-{os}-{m}'.format(
+        v=wam_version,
+        os=operating_system,
+        m=machine_type)
 
     if operating_system.lower() == 'linux':
-        subprocess.run(
-            [
-                'pyinstaller',
-                '--noconfirm',
-                #'--clean',
-                '--name', app_name,
-                '--paths', '/var/opt/git/watchmaker/src',
-                #'--paths', 'C:\\git\\watchmaker\\src\\watchmaker.egg-info',
-                '--additional-hooks-dir', '/var/opt/git/pyppyn/pyinstaller',
-                # This hidden import is introduced by botocore.
-                # We won't need this when this issue is resolved:
-                # https://github.com/pyinstaller/pyinstaller/issues/1844
-                '--hidden-import', 'html.parser',
-                # This hidden import is also introduced by botocore.
-                # It appears to be related to this issue:
-                # https://github.com/pyinstaller/pyinstaller/issues/1935
-                '--hidden-import', 'configparser',
-                '--hidden-import', 'watchmaker',
-                '--hidden-import', 'backoff',
-                '--hidden-import', 'click',
-                '--hidden-import', 'defusedxml',
-                '--hidden-import', 'six',
-                '--hidden-import', 'PyYAML',
-                '--hidden-import', 'pkg_resources',
-                'watchmaker-script.py'
-            ],
-            check=True)
-    else:
-        subprocess.run(
-            [
-                'pyinstaller',
-                '--noconfirm',
-                #'--clean',
-                '--name', 'watchmaker',
-                '--paths', 'C:\\git\\watchmaker\\src',
-                #'--paths', 'C:\\git\\watchmaker\\src\\watchmaker.egg-info',
-                '--additional-hooks-dir', 'C:\\git\\pyppyn\\pyinstaller',
-                # This hidden import is introduced by botocore.
-                # We won't need this when this issue is resolved:
-                # https://github.com/pyinstaller/pyinstaller/issues/1844
-                '--hidden-import', 'html.parser',
-                # This hidden import is also introduced by botocore.
-                # It appears to be related to this issue:
-                # https://github.com/pyinstaller/pyinstaller/issues/1935
-                '--hidden-import', 'configparser',
-                '--hidden-import', 'watchmaker',
-                '--hidden-import', 'backoff',
-                '--hidden-import', 'click',
-                '--hidden-import', 'defusedxml',
-                '--hidden-import', 'six',
-                '--hidden-import', 'PyYAML',
-                '--hidden-import', 'pypiwin32',
-                '--hidden-import', 'pkg_resources',
-                'watchmaker-script.py'
-            ],
-            check=True)
+        src_path = '/var/opt/git/watchmaker/src'
+        additional_hooks = '/var/opt/git/pyppyn/pyinstaller'
+    elif operating_system.lower() == 'windows':
+        src_path = 'C:\\git\\watchmaker\\src'
+        additional_hooks = 'C:\\git\\pyppyn\\pyinstaller'
 
-    shutil.make_archive(
+    commands = [
+        'pyinstaller',
+        '--noconfirm',
+        #'--clean',
+        '--onefile',
+        '--name', app_name,
+        '--paths', src_path,
+        #'--paths', 'C:\\git\\watchmaker\\src\\watchmaker.egg-info',
+        '--additional-hooks-dir', additional_hooks,
+        # This hidden import is introduced by botocore.
+        # We won't need this when this issue is resolved:
+        # https://github.com/pyinstaller/pyinstaller/issues/1844
+        '--hidden-import', 'html.parser',
+        # This hidden import is also introduced by botocore.
+        # It appears to be related to this issue:
+        # https://github.com/pyinstaller/pyinstaller/issues/1935
+        '--hidden-import', 'configparser',
+        '--hidden-import', 'watchmaker',
+        '--hidden-import', 'backoff',
+        '--hidden-import', 'click',
+        '--hidden-import', 'defusedxml',
+        '--hidden-import', 'six',
+        '--hidden-import', 'PyYAML',
+        '--hidden-import', 'pkg_resources',
+        'watchmaker-script.py'
+    ]
+    
+    if operating_system.lower() == 'windows':
+        insert_point = commands.index('PyYAML')
+        commands[insert_point:insert_point] = ['--hidden-import', 'pypiwin32']
+
+    subprocess.run(
+        commands,
+        check=True)
+
+    # zip up
+    """shutil.make_archive(
         base_name=os.path.join(
             THIS_DIR, 'dist',
             'watchmaker-{v}-standalone-{os}-{m}'.format(
@@ -82,4 +68,4 @@ if __name__ == '__main__':
                 os=operating_system,
                 m=machine_type)),
         format='zip',
-        root_dir=os.path.join(THIS_DIR, 'dist', app_name))
+        root_dir=os.path.join(THIS_DIR, 'dist', app_name))"""

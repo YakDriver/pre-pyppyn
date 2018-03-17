@@ -38,7 +38,7 @@ datas += copy_metadata('backoff')
 
 if platform.system().lower() == 'linux':
     datas.append(('/var/opt/git/watchmaker/src/watchmaker/static', './watchmaker/static'))
-else:
+elif platform.system().lower() == 'windows':
     datas += copy_metadata('pypiwin32')
     datas.append(('C:/git/watchmaker/src/watchmaker/static', './watchmaker/static'))
 
