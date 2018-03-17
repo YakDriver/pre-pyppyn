@@ -4,8 +4,6 @@ import shutil
 import subprocess
 import sys
 
-sys.path.append('C:\git\watchmaker\src')
-
 from watchmaker import __version__ as wam_version
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -16,13 +14,15 @@ if __name__ == '__main__':
         operating_system = 'OSX'
     machine_type = platform.machine()
 
+    app_name = 'watchmaker-standalone'
+
     if operating_system.lower() == 'linux':
         subprocess.run(
             [
                 'pyinstaller',
                 '--noconfirm',
                 #'--clean',
-                '--name', 'watchmaker',
+                '--name', app_name,
                 '--paths', '/var/opt/git/watchmaker/src',
                 #'--paths', 'C:\\git\\watchmaker\\src\\watchmaker.egg-info',
                 '--additional-hooks-dir', '/var/opt/git/pyppyn/pyinstaller',
@@ -82,4 +82,4 @@ if __name__ == '__main__':
                 os=operating_system,
                 m=machine_type)),
         format='zip',
-        root_dir=os.path.join(THIS_DIR, 'dist', 'watchmaker'))
+        root_dir=os.path.join(THIS_DIR, 'dist', app_name))
