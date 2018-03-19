@@ -1,5 +1,23 @@
 #!/bin/bash
 
+read_properties() {
+  file="/tmp/pyppyn.properties"
+  if [ -f "$file" ]; then
+    echo "Properties file found ($file)"
+
+    while IFS='=' read -r key value
+    do
+      key=$(echo $key | tr '.' '_')
+      eval "${key}='${value}'"
+    done < "$file"
+
+    echo "S3 path = " ${s3_path}
+    echo "user password = " ${dist_path}
+  else
+    echo "Properties file NOT found ($file)"
+  fi
+}
+
 finally() {
   local exit_code="${1:-0}"
 
@@ -54,6 +72,7 @@ if [ "${userdata_status[0]}" -eq 0 ] ; then
   # ------------------------------------------------------------ WAM TESTS BEGIN
   # move the binary to s3 ?
   
+
   # ------------------------------------------------------------ WAM TESTS END
   
   test_status=(0 "Success")
