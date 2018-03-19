@@ -5,6 +5,8 @@ read_properties() {
   if [ -f "$file" ]; then
     echo "Properties file found ($file)"
 
+    cat $file
+
     while IFS='=' read -r key value
     do
       key=$(echo $key | tr '.' '_')
