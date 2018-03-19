@@ -56,14 +56,15 @@ if __name__ == '__main__':
     if operating_system.lower() == 'windows':
         insert_point = commands.index('yaml')
         commands[insert_point:insert_point] = ['--hidden-import', 'pypiwin32']
+    elif operating_system.lower() == 'linux':
+        insert_point = commands.index('--onefile')
+        commands[insert_point:insert_point] = ['--runtime-tmpdir', './tmp']
 
+    print(*commands, sep = "\n")
+    
     subprocess.run(
         commands,
         check=True)
-
-    file = open("app_name.txt","w") 
-    file.write(app_name) 
-    file.close() 
 
     # zip up
     """shutil.make_archive(

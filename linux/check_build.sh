@@ -72,8 +72,8 @@ if [ "${userdata_status[0]}" -eq 0 ] ; then
   # move the binary to s3
 
   read_properties
-  
-  aws s3 cp "${dist_path}" "${s3_path}" --include "watchmaker*"
+
+  aws s3 cp "${dist_path}" "${s3_path}" --recursive --include "watchmaker*"
 
   test_status=(0 "Success")
 fi
