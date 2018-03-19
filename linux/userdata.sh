@@ -80,6 +80,7 @@ finally() {
   # move logs to s3
   aws s3 cp ${tfi_lx_userdata_log} "s3://${tfi_s3_bucket}/${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$${s3_keyfix}/userdata.log" || true
   aws s3 cp /var/log "s3://${tfi_s3_bucket}/${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$${s3_keyfix}/cloud/" --recursive --exclude "*" --include "cloud*log" || true
+  # TODO: move the binary over to s3
   aws s3 cp /var/log/watchmaker "s3://${tfi_s3_bucket}/${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$${s3_keyfix}/watchmaker/" --recursive || true
   
   exit "$${exit_code}"
@@ -172,7 +173,7 @@ cd "$${base_dir}/watchmaker"
 pip3.6 install --index-url="$pypi_url" --editable .
 
 echo "Install pyinstaller..."
-pip3.6 install --upgrade pyinstaller pyyaml backoff six click defusedxml
+pip3.6 install --upgrade pyinstaller pyyaml backoff six click defusedxml packaging
 
 echo "Verifying installation..."
 if [ -f "$${venv_bin}/watchmaker" ]; then
