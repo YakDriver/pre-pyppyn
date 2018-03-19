@@ -28,7 +28,7 @@ if __name__ == '__main__':
         'pyinstaller',
         '--noconfirm',
         #'--clean',
-        #'--onefile',
+        '--onefile',
         '--name', app_name,
         '--paths', src_path,
         '--additional-hooks-dir', additional_hooks,
