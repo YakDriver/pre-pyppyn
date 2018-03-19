@@ -58,9 +58,9 @@ if __name__ == '__main__':
         commands[insert_point:insert_point] = ['--hidden-import', 'pypiwin32']
     elif operating_system.lower() == 'linux':
         insert_point = commands.index('--onefile')
-        commands[insert_point:insert_point] = ['--runtime-tmpdir', './tmp']
+        commands[insert_point:insert_point] = ['--runtime-tmpdir', '.']
 
-    print(*commands, sep = "\n")
+    print(*commands, sep=', ')
     
     subprocess.run(
         commands,
