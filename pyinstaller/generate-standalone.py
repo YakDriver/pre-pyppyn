@@ -61,6 +61,10 @@ if __name__ == '__main__':
         commands,
         check=True)
 
+    file = open("app_name.txt","w") 
+    file.write(app_name) 
+    file.close() 
+
     # zip up
     """shutil.make_archive(
         base_name=os.path.join(
