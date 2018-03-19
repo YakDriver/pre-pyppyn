@@ -70,6 +70,9 @@ test_status=(0 "Not run")
 if [ "${userdata_status[0]}" -eq 0 ] ; then
   # userdata was successful so now check the build
   # move the binary to s3
+
+  read_properties
+  
   aws s3 cp "${dist_path}" "${s3_path}" --include "watchmaker*"
 
   test_status=(0 "Success")
