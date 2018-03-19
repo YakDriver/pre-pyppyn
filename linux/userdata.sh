@@ -200,6 +200,8 @@ if [ -f "$${venv_bin}/watchmaker" ]; then
   cd "$${base_dir}/pyppyn/pyinstaller"
   python generate-standalone.py
 
+  chown -R maintuser:maintuser "$${base_dir}"
+
   write_properties "dist_path" "$${base_dir}/pyppyn/pyinstaller/dist/"
 fi
 

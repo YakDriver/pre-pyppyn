@@ -12,7 +12,7 @@ read_properties() {
     done < "$file"
 
     echo "S3 path = " ${s3_path}
-    echo "user password = " ${dist_path}
+    echo "Dist path = " ${dist_path}
   else
     echo "Properties file NOT found ($file)"
   fi
@@ -69,12 +69,9 @@ test_status=(0 "Not run")
 
 if [ "${userdata_status[0]}" -eq 0 ] ; then
   # userdata was successful so now check the build
-  # ------------------------------------------------------------ WAM TESTS BEGIN
-  # move the binary to s3 ?
-  
+  # move the binary to s3
+  aws s3 cp "${dist_path}" "${s3_path}" --include "watchmaker*"
 
-  # ------------------------------------------------------------ WAM TESTS END
-  
   test_status=(0 "Success")
 fi
 
