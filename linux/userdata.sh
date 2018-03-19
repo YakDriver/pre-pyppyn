@@ -88,8 +88,6 @@ finally() {
   # TODO: move the binary over to s3
   # aws s3 cp /var/log/watchmaker "s3://${tfi_s3_bucket}/${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$${s3_keyfix}/watchmaker/" --recursive || true
   
-  write_properties "s3_path" "s3://${tfi_s3_bucket}/${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/"
-  
   exit "$${exit_code}"
 }
 
@@ -203,6 +201,7 @@ if [ -f "$${venv_bin}/watchmaker" ]; then
   chown -R maintuser:maintuser "$${base_dir}"
 
   write_properties "dist_path" "$${base_dir}/pyppyn/pyinstaller/dist/"
+  write_properties "s3_path" "s3://${tfi_s3_bucket}/${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/"
 fi
 
 # Install watchmaker
