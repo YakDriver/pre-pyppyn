@@ -11,7 +11,7 @@ resource "tls_private_key" "gen_key" {
 }
 
 resource "random_string" "password" {
-  length           = 14
+  length           = 18
   special          = true
   override_special = "()~!@#^&*+=|{}[]:;<>,?"
 }
