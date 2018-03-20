@@ -218,6 +218,8 @@ Catch
 
 $ErrorActionPreference = "Continue"
 
+[Net.ServicePointManager]::SecurityProtocol = "Ssl3, Tls"
+
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
 Tfi-Out "Set winrm/config/service allowunencrypted=true" $?
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth '@{Basic=`"true`"}'" -Wait
