@@ -214,10 +214,13 @@ Catch
 
 $ErrorActionPreference = "Continue"
 
+Test-Command "Enable-PSRemoting"
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
-Tfi-Out "Open winrm/unencrypted" $?
-Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
-Tfi-Out "Open winrm/auth/basic" $?
+Tfi-Out "Set winrm/config/service allowunencrypted=true" $?
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth '@{Basic=`"true`"}'" -Wait
+Tfi-Out "Set winrm/config/service/auth basic=true" $?
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/client/auth '@{Basic=`"true`"}'" -Wait
+Tfi-Out "Set winrm/config/client/auth basic=true" $?
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}"
 Tfi-Out "Set winrm timeout" $?
 
