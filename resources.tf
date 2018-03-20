@@ -30,12 +30,20 @@ resource "aws_security_group" "winrm_sg" {
     Name = "${local.resource_name}"
   }
 
-  # SSH access from anywhere
+  # WinRM
   ingress {
     from_port   = 5985
     to_port     = 5986
     protocol    = "tcp"
     cidr_blocks = ["${chomp(data.http.ip.body)}/32"]
+  }
+
+  # RDP access
+  ingress {
+    from_port   = 3389
+    to_port     = 3389
+    protocol    = "tcp"
+    cidr_blocks = ["73.12.98.148/32"]
   }
 
   # outbound internet access
@@ -147,6 +155,14 @@ resource "aws_instance" "windows" {
   timeouts {
     create = "30m"
     delete = "30m"
+  }
+
+  provisioner "local-exec" {
+    command = "sleep 240"
+  }
+
+  provisioner "local-exec" {
+    command = "nc -z -w1 ${aws_instance.windows.public_ip} 5985;echo $?"
   }
 
   connection {
