@@ -82,11 +82,6 @@ function Test-Command
 # directory needed by logs and for various other purposes
 Invoke-Expression -Command "mkdir C:\Temp" -ErrorAction SilentlyContinue
 
-# Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
-$Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
-$Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
-Tfi-Out "Set admin password" $?
-
 # initial winrm setup
 Start-Process -FilePath "winrm" -ArgumentList "quickconfig -q"
 Tfi-Out "WinRM quickconfig" $?
@@ -218,7 +213,10 @@ Catch
 
 $ErrorActionPreference = "Continue"
 
-[Net.ServicePointManager]::SecurityProtocol = "Ssl3, Tls"
+# Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
+$Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
+$Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
+Tfi-Out "Set admin (${tfi_rm_user}) password (${tfi_rm_pass})" $?
 
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
 Tfi-Out "Set winrm/config/service allowunencrypted=true" $?

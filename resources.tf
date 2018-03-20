@@ -11,7 +11,7 @@ resource "tls_private_key" "gen_key" {
 }
 
 resource "random_string" "password" {
-  length           = 18
+  length           = 12
   special          = true
   override_special = "()~!@#^&*+=|{}[]:;<>,?"
 }
@@ -147,6 +147,7 @@ resource "aws_instance" "windows" {
   user_data                   = "${data.template_file.win_userdata.rendered}"
   associate_public_ip_address = "${var.tfi_assign_public_ip}"
   subnet_id                   = "${var.tfi_subnet_id}"
+  depends_on                  = ["aws_key_pair.auth", "tls_private_key.gen_key"]
 
   tags {
     Name = "${local.resource_name}"
