@@ -13,9 +13,9 @@ if __name__ == '__main__':
     machine_type = platform.machine()
 
     app_name = 'watchmaker-{v}-standalone-{os}-{m}'.format(
-        v=wam_version,
+        v=wam_version.lower(),
         os=operating_system.lower(),
-        m=machine_type)
+        m=machine_type.lower())
 
     if operating_system.lower() == 'linux':
         src_path = '/var/opt/git/watchmaker/src'
@@ -54,10 +54,10 @@ if __name__ == '__main__':
     ]
     
     if operating_system.lower() == 'windows':
-        insert_point = commands.index('yaml')
+        insert_point = commands.index('yaml') + 1
         commands[insert_point:insert_point] = ['--hidden-import', 'pypiwin32']
     elif operating_system.lower() == 'linux':
-        insert_point = commands.index('--onefile')
+        insert_point = commands.index('--onefile') + 1
         commands[insert_point:insert_point] = ['--runtime-tmpdir', '.']
 
     print(*commands, sep=', ')

@@ -5,11 +5,11 @@ Write-Host ("Running Watchmaker test script: WINDOWS")
 Write-Host ("*****************************************************************************")
 Write-Host ((Get-WmiObject -class Win32_OperatingSystem).Caption)
 
-$UdPath = "C:\Temp\userdata_status"
-
-If (Test-Path -Path $UdPath)
+$UserdataStatusFile = "C:\Temp\userdata_status"
+$UserdataPropsFile = "C:\Temp\pyppyn.properties"
+If (Test-Path -Path $UserdataStatusFile)
 {   # file exists, read into variable
-    $UserdataStatus=gc $UdPath
+    $UserdataStatus=gc $UserdataStatusFile
 }
 Else
 {   # error, no userdata status found
@@ -29,7 +29,7 @@ If ($UserdataStatus[0] -eq 0)
         # NOTE: if tests don't have an error action of "Stop," by default or explicitly set, won't be caught
         # NOTE: default erroraction in powershell is "Continue"
         # ------------------------------------------------------------ WAM TESTS BEGIN
-        $UserdataProps = ConvertFrom-StringData (Get-Content "C:\Temp\pyppyn.properties" -raw)
+        $UserdataProps = ConvertFrom-StringData (Get-Content $UserdataPropsFile -raw)
         Write-S3Object -BucketName $UserdataProps.S3Bucket -Folder $UserdataProps.DistPath -KeyPrefix $UserdataProps.S3Prefix -SearchPattern *.exe
 
         # ------------------------------------------------------------ WAM TESTS END
