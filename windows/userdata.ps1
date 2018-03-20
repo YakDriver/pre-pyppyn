@@ -201,6 +201,7 @@ Try {
     "DistPath=$BaseDir\pyppyn\pyinstaller\dist" | Out-File $UserdataPropsFile -Append
     "S3Prefix=${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}" | Out-File $UserdataPropsFile -Append
 
+    $UserdataStatus=@(0,"Well, we got this far")
   }
 
 }

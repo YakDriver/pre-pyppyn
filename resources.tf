@@ -11,7 +11,7 @@ resource "tls_private_key" "gen_key" {
 }
 
 resource "random_string" "password" {
-  length           = 12
+  length           = 14
   special          = true
   override_special = "()~!@#^&*+=|{}[]:;<>,?"
 }
@@ -163,13 +163,13 @@ resource "aws_instance" "windows" {
     timeout  = "30m"
   }
 
-  provisioner "local-exec" {
-    command = "sleep 300"
-  }
+  #provisioner "local-exec" {
+  #  command = "sleep 300"
+  #}
 
-  provisioner "local-exec" {
-    command = "nc -z -w1 ${aws_instance.windows.public_ip} 5985;echo $?"
-  }
+  #provisioner "local-exec" {
+  #  command = "nc -z -w1 ${aws_instance.windows.public_ip} 5985;echo $?"
+  #}
 
   provisioner "file" {
     source      = "windows/check_build.ps1"
