@@ -133,8 +133,9 @@ Try {
 
   # Clone watchmaker
   Tfi-Out "Cloning watchmaker..."
-  mkdir C:\git
-  cd C:\git
+  $BaseDir = "C:\git"
+  New-Item $BaseDir -ItemType Directory 
+  cd $BaseDir
   Test-Command "git clone `"$GitRepo`" --recursive" -Tries 2
   cd watchmaker
   If ($GitRef)
@@ -152,13 +153,14 @@ Try {
   }
 
   Tfi-Out "Cloning pyppyn..."
-  cd C:\git
+  cd $BaseDir
   Test-Command "git clone https://github.com/YakDriver/pyppyn.git"
-  cd C:\git\pyppyn  
+  cd $BaseDir\pyppyn  
 
   Tfi-Out "Creating virtual environment..."
   Test-Command "python -m venv venv"
-  cd C:\git\pyppyn\venv\Scripts
+  $VenvBin="$BaseDir\pyppyn\venv\Scripts"
+  cd $VenvBin
   Test-Command ".\activate"
   Test-Command "python -c `"import sys; print('Inside venv' if sys.base_prefix != sys.prefix else 'Outside venv')`""
   
@@ -166,44 +168,41 @@ Try {
   Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
 
   Tfi-Out "Installing watchmaker distribution..."
-  cd C:\git\watchmaker
+  cd $BaseDir\watchmaker
   Test-Command "pip install --index-url=`"$PypiUrl`" --editable ."
 
   Tfi-Out "Install pyinstaller..."
-  Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml"
+  Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml packaging"
 
   Tfi-Out "Verifying installation..."
-  If(Test-Path -Path "C:\git\pyppyn\venv\Scripts\watchmaker-script.py")
+  If(Test-Path -Path "$VenvBin\watchmaker-script.py")
   {
     Tfi-Out "watchmaker installed correctly"
   }
   Else
   {
     Tfi-Out "ERROR: watchmaker did not install correctly (try 1)"
-    cd C:\git\watchmaker
+    cd $BaseDir\watchmaker
     Test-Command "pip install --editable ."
   }
 
   Tfi-Out "Re-verifying installation..."
-  If(Test-Path -Path "C:\git\pyppyn\venv\Scripts\watchmaker-script.py")
+  If(Test-Path -Path "$VenvBin\watchmaker-script.py")
   {
     Tfi-Out "Building standalone..."
 
-    copy C:\git\pyppyn\venv\Scripts\watchmaker-script.py C:\git\pyppyn\pyinstaller
+    copy $VenvBin\watchmaker-script.py $BaseDir\pyppyn\pyinstaller
 
-    cd C:\git\pyppyn\pyinstaller
+    cd $BaseDir\pyppyn\pyinstaller
     Test-Command "python generate-standalone.py"
+
+    $UserdataPropsFile = "C:\Temp\pyppyn.properties"
+    "S3Bucket=${tfi_s3_bucket}" | Out-File $UserdataPropsFile -Append
+    "DistPath=$BaseDir\pyppyn\pyinstaller\dist" | Out-File $UserdataPropsFile -Append
+    "S3Prefix=${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}" | Out-File $UserdataPropsFile -Append
+
   }
 
-
-
-  #cd C:\watchmaker\src\watchmaker
-
-  #Test-Command "pyinstaller --onefile __main__.py"
-
-  #cd dist
-
-  #Test-Command "ren __main__.exe watchmaker.exe"
 }
 Catch
 {
@@ -215,6 +214,21 @@ Catch
 
 $ErrorActionPreference = "Continue"
 
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
+Tfi-Out "Open winrm/unencrypted" $?
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
+Tfi-Out "Open winrm/auth/basic" $?
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}"
+Tfi-Out "Set winrm timeout" $?
+
+# write the status to a file for reading by test script
+$UserdataStatus | Out-File C:\Temp\userdata_status
+Tfi-Out "Write userdata status file" $?
+
+# open firewall for winrm - rule was added previously, now we modify it with "set"
+netsh advfirewall firewall set rule name="WinRM in" new action=allow
+Tfi-Out "Open firewall" $?
+
 # upload logs to S3 bucket
 $S3Keyfix="Win" + (((Get-WmiObject -class Win32_OperatingSystem).Caption) -replace '.+(\d\d)\s(.{2}).+','$1$2')
 If ($S3Keyfix.Substring($S3Keyfix.get_Length()-2) -eq 'Da') {
@@ -222,8 +236,8 @@ If ($S3Keyfix.Substring($S3Keyfix.get_Length()-2) -eq 'Da') {
 }
 
 $ArtifactPrefix = "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$S3Keyfix"
-Tfi-Out "Copying executable to $ArtifactPrefix"
-Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "$ArtifactPrefix" -SearchPattern *.zip
+#Tfi-Out "Copying executable to $ArtifactPrefix"
+#Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "$BaseDir\pyppyn\pyinstaller\dist" -KeyPrefix "$ArtifactPrefix" -SearchPattern *.zip
 
 Tfi-Out "Writing logs to $ArtifactPrefix"
 Write-S3Object -BucketName "${tfi_s3_bucket}/$ArtifactPrefix" -File "${tfi_win_userdata_log}"

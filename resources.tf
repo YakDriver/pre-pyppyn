@@ -156,14 +156,14 @@ resource "aws_instance" "windows" {
     timeout  = "20m"
   }
 
-  #provisioner "file" {
-  #  source      = "windows/check_build.ps1"
-  #  destination = "C:\\scripts\\check_build.ps1"
-  #}
+  provisioner "file" {
+    source      = "windows/check_build.ps1"
+    destination = "C:\\scripts\\check_build.ps1"
+  }
 
-  #provisioner "remote-exec" {
-  #  inline = [
-  #    "powershell.exe -File C:\\scripts\\check_build.ps1",
-  #  ]
-  #}
+  provisioner "remote-exec" {
+    inline = [
+      "powershell.exe -File C:\\scripts\\check_build.ps1",
+    ]
+  }
 }

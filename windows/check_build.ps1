@@ -29,7 +29,8 @@ If ($UserdataStatus[0] -eq 0)
         # NOTE: if tests don't have an error action of "Stop," by default or explicitly set, won't be caught
         # NOTE: default erroraction in powershell is "Continue"
         # ------------------------------------------------------------ WAM TESTS BEGIN
-        Invoke-Expression -Command "watchmaker --version"  -ErrorAction Stop
+        $UserdataProps = ConvertFrom-StringData (Get-Content "C:\Temp\pyppyn.properties" -raw)
+        Write-S3Object -BucketName $UserdataProps.S3Bucket -Folder $UserdataProps.DistPath -KeyPrefix $UserdataProps.S3Prefix -SearchPattern *.exe
 
         # ------------------------------------------------------------ WAM TESTS END
         
