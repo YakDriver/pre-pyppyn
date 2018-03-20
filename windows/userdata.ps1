@@ -210,6 +210,9 @@ Catch
   Tfi-Out ("*** ERROR caught ($Stage) ***")
   Tfi-Out $ErrorMessage
 
+  # setup userdata status for passing to the test script via a file
+  $ErrCode = 1  # trying to set this to $lastExitCode does not work (always get 0)
+  $UserdataStatus=@($ErrCode,"Error at: " + $Stage + " [$ErrorMessage]")
 }
 
 $ErrorActionPreference = "Continue"

@@ -153,8 +153,19 @@ resource "aws_instance" "windows" {
   }
 
   timeouts {
-    create = "30m"
-    delete = "30m"
+    create = "40m"
+  }
+
+  connection {
+    type     = "winrm"
+    user     = "${var.tfi_rm_user}"
+    password = "${random_string.password.result}"
+    timeout  = "30m"
+  }
+
+  provisioner "file" {
+    source      = "windows/check_build.ps1"
+    destination = "C:\\scripts\\check_build.ps1"
   }
 
   provisioner "local-exec" {
@@ -163,18 +174,6 @@ resource "aws_instance" "windows" {
 
   provisioner "local-exec" {
     command = "nc -z -w1 ${aws_instance.windows.public_ip} 5985;echo $?"
-  }
-
-  connection {
-    type     = "winrm"
-    user     = "${var.tfi_rm_user}"
-    password = "${random_string.password.result}"
-    timeout  = "20m"
-  }
-
-  provisioner "file" {
-    source      = "windows/check_build.ps1"
-    destination = "C:\\scripts\\check_build.ps1"
   }
 
   provisioner "remote-exec" {
