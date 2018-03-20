@@ -163,18 +163,18 @@ resource "aws_instance" "windows" {
     timeout  = "30m"
   }
 
+  provisioner "local-exec" {
+    command = "sleep 300"
+  }
+
+  provisioner "local-exec" {
+    command = "nc -z -w1 ${aws_instance.windows.public_ip} 5985;echo $?"
+  }
+
   provisioner "file" {
     source      = "windows/check_build.ps1"
     destination = "C:\\scripts\\check_build.ps1"
   }
-
-  #provisioner "local-exec" {
-  #  command = "sleep 360"
-  #}
-
-  #provisioner "local-exec" {
-  #  command = "nc -z -w1 ${aws_instance.windows.public_ip} 5985;echo $?"
-  #}
 
   provisioner "remote-exec" {
     inline = [
