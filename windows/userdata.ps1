@@ -243,8 +243,12 @@ $ArtifactPrefix = "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$S3Keyfix
 #Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "$BaseDir\pyppyn\pyinstaller\dist" -KeyPrefix "$ArtifactPrefix" -SearchPattern *.zip
 
 Tfi-Out "Writing logs to $ArtifactPrefix"
-Write-S3Object -BucketName "${tfi_s3_bucket}/$ArtifactPrefix" -File "${tfi_win_userdata_log}"
 Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Log" -KeyPrefix "$ArtifactPrefix/cloud/"
 Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "C:\\Program Files\\Amazon\\Ec2ConfigService\\Logs" -KeyPrefix "$ArtifactPrefix/cloud/"
+
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
+Tfi-Out "Set winrm/config/service/auth basic=true" $?
+
+Write-S3Object -BucketName "${tfi_s3_bucket}/$ArtifactPrefix" -File "${tfi_win_userdata_log}"
 
 </powershell>
