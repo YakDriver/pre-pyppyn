@@ -82,10 +82,6 @@ function Test-Command
 # directory needed by logs and for various other purposes
 Invoke-Expression -Command "mkdir C:\Temp" -ErrorAction SilentlyContinue
 
-# initial winrm setup
-Start-Process -FilePath "winrm" -ArgumentList "quickconfig -q"
-Tfi-Out "WinRM quickconfig" $?
-
 # close the firewall
 #netsh advfirewall firewall add rule name="WinRM in" protocol=tcp dir=in profile=any localport=5985 remoteip=any localip=any action=block
 Tfi-Out "Close firewall" $?
@@ -218,9 +214,12 @@ $Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
 $Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
 Tfi-Out "Set admin (${tfi_rm_user}) password (${tfi_rm_pass})" $?
 
+# initial winrm setup
+Start-Process -FilePath "winrm" -ArgumentList "quickconfig -q"
+Tfi-Out "WinRM quickconfig" $?
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
 Tfi-Out "Set winrm/config/service allowunencrypted=true" $?
-Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth '@{Basic=`"true`"}'" -Wait
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
 Tfi-Out "Set winrm/config/service/auth basic=true" $?
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}"
 Tfi-Out "Set winrm timeout" $?
