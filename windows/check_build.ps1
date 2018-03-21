@@ -46,7 +46,7 @@ If ($UserdataStatus[0] -eq 0)
             mkdir $TempExeDir
             Copy-Item "$($UserdataProps.DistPath)\*.exe" -Destination $TempExeDir
             $FileName = (Get-childitem $TempExeDir -include *.exe -recurse | Select -exp Name)
-            Rename-Item -Path "$TempExeDir\\$FileName" -NewName $TempName
+            Rename-Item -Path "$TempExeDir\$FileName" -NewName $TempName
             Write-Host "6"
             Write-S3Object -BucketName $UserdataProps.S3Bucket -Key "$($UserdataProps.S3Prefix)/$FileName" -File "$TempExeDir\$TempName"
             Write-Host "7"
