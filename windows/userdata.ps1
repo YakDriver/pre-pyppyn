@@ -82,9 +82,9 @@ function Test-Command
 # directory needed by logs and for various other purposes
 Invoke-Expression -Command "mkdir C:\Temp" -ErrorAction SilentlyContinue
 
-# close the firewall
-#netsh advfirewall firewall add rule name="WinRM in" protocol=tcp dir=in profile=any localport=5985 remoteip=any localip=any action=block
-Tfi-Out "Close firewall" $?
+# close winrm
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"false`"}" -Wait
+Tfi-Out "Set winrm/config/service/auth basic=false" $?
 
 # declare an array to hold the status (number and message)
 $UserdataStatus=@(1,"Error: Install not completed (should never see this error)")
@@ -227,10 +227,6 @@ Tfi-Out "Set winrm timeout" $?
 # write the status to a file for reading by test script
 $UserdataStatus | Out-File C:\Temp\userdata_status
 Tfi-Out "Write userdata status file" $?
-
-# open firewall for winrm - rule was added previously, now we modify it with "set"
-#netsh advfirewall firewall set rule name="WinRM in" new action=allow
-Tfi-Out "Open firewall" $?
 
 # upload logs to S3 bucket
 $S3Keyfix="Win" + (((Get-WmiObject -class Win32_OperatingSystem).Caption) -replace '.+(\d\d)\s(.{2}).+','$1$2')
