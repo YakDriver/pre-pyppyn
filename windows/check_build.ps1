@@ -48,9 +48,12 @@ If ($UserdataStatus[0] -eq 0)
             $BucketName = $UserdataProps.S3Bucket
             $Folder = $UserdataProps.DistPath
             $KeyPrefix = $UserdataProps.S3Prefix
-
-            Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern *.exe
             Write-Host "6"
+
+            Write-S3Object -BucketName "pyppyn" -Folder "C:\\git\\pyppyn\\pyinstaller\\dist" -KeyPrefix "20180321/1853_269fd71c5b95" -SearchPattern *.exe
+            Write-Host "7"
+            Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern *.exe
+            Write-Host "8"
         }
         Else
         {   
