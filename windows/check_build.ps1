@@ -40,6 +40,10 @@ If ($UserdataStatus[0] -eq 0)
             $UserdataProps = ConvertFrom-StringData($FileContent)
             Write-Host "5"
 
+            Write-Host ("Bucket: " + $UserdataProps.S3Bucket)
+            Write-Host ("Dist Path: " + $UserdataProps.DistPath)
+            Write-Host ("S3 Prefix: " + $UserdataProps.S3Prefix)
+
             Write-S3Object -BucketName $UserdataProps.S3Bucket -Folder $UserdataProps.DistPath -KeyPrefix $UserdataProps.S3Prefix -SearchPattern *.exe
             Write-Host "6"
         }
