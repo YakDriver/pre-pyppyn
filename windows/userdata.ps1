@@ -87,7 +87,7 @@ Start-Process -FilePath "winrm" -ArgumentList "quickconfig -q"
 Tfi-Out "WinRM quickconfig" $?
 
 # close the firewall
-netsh advfirewall firewall add rule name="WinRM in" protocol=tcp dir=in profile=any localport=5985 remoteip=any localip=any action=block
+#netsh advfirewall firewall add rule name="WinRM in" protocol=tcp dir=in profile=any localport=5985 remoteip=any localip=any action=block
 Tfi-Out "Close firewall" $?
 
 # declare an array to hold the status (number and message)
@@ -230,7 +230,7 @@ $UserdataStatus | Out-File C:\Temp\userdata_status
 Tfi-Out "Write userdata status file" $?
 
 # open firewall for winrm - rule was added previously, now we modify it with "set"
-netsh advfirewall firewall set rule name="WinRM in" new action=allow
+#netsh advfirewall firewall set rule name="WinRM in" new action=allow
 Tfi-Out "Open firewall" $?
 
 # upload logs to S3 bucket
