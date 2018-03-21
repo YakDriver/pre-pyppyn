@@ -41,9 +41,15 @@ If ($UserdataStatus[0] -eq 0)
             $UserdataProps = ConvertFrom-StringData($FileContent)
             Write-Host "5"
 
-            Copy-Item "$($UserdataProps.DistPath)\*.exe" -Destination "C:\Temp"
+            $TempExeDir = "C:\Temp\exe"
+            $TempName = "a.exe"
+            mkdir $TempExeDir
+            Copy-Item "$($UserdataProps.DistPath)\*.exe" -Destination $TempExeDir
+            $FileName = (Get-childitem $TempExeDir -include *.exe -recurse | Select -exp Name)
+            Rename-Item -Path "$TempExeDir\\$FileName" -NewName $TempName
             Write-Host "6"
-
+            Write-S3Object -BucketName $UserdataProps.S3Bucket -Key "$($UserdataProps.S3Prefix)/$FileName" -File "$TempExeDir\$TempName"
+            Write-Host "7"
             Write-Host ("Bucket: " + $UserdataProps.S3Bucket)
             Write-Host ("Dist Path: " + $UserdataProps.DistPath)
             Write-Host ("S3 Prefix: " + $UserdataProps.S3Prefix)
@@ -52,14 +58,14 @@ If ($UserdataStatus[0] -eq 0)
             $Folder = $UserdataProps.DistPath
             $KeyPrefix = $UserdataProps.S3Prefix
 
-            Write-S3Object -BucketName "$($UserdataProps.S3Bucket)" -Folder "C:\Temp\" -KeyPrefix "$($UserdataProps.S3Prefix)" -SearchPattern "*.exe"
-            Write-Host "7"
-            Write-S3Object -BucketName "pyppyn" -Folder "C:\\git\\pyppyn\\pyinstaller\\dist\\" -KeyPrefix "20180321/1853_269fd71c5b95" -SearchPattern "*.exe"
-            Write-Host "8"
-            Write-S3Object -BucketName "pyppyn" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "20180321/1853_269fd71c5b96" -SearchPattern *.exe
-            Write-Host "9"
-            Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern *.exe
-            Write-Host "10"
+            #Write-S3Object -BucketName "$($UserdataProps.S3Bucket)" -Folder "C:\Temp\" -KeyPrefix "$($UserdataProps.S3Prefix)" -SearchPattern "*.exe"
+            #Write-Host "7"
+            #Write-S3Object -BucketName "pyppyn" -Folder "C:\\git\\pyppyn\\pyinstaller\\dist\\" -KeyPrefix "20180321/1853_269fd71c5b95" -SearchPattern "*.exe"
+            #Write-Host "8"
+            ##Write-S3Object -BucketName "pyppyn" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "20180321/1853_269fd71c5b96" -SearchPattern *.exe
+            #Write-Host "9"
+            #Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern *.exe
+            #Write-Host "10"
         }
         Else
         {   
