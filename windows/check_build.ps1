@@ -30,12 +30,18 @@ If ($UserdataStatus[0] -eq 0)
         If (Test-Path -Path $UserdataPropsFile)
         {   # file exists!
             # Read in props file. Since it has paths with backslashes, requires special handling
+            Write-Host "1"
             $FileContent = Get-Content $UserdataPropsFile -raw
+            Write-Host "2"
             $FileContent = [Regex]::Escape($FileContent)
+            Write-Host "3"
             $FileContent = $FileContent -replace "(\\r)?\\n", [Environment]::NewLine
+            Write-Host "4"
             $UserdataProps = ConvertFrom-StringData($FileContent)
+            Write-Host "5"
 
             Write-S3Object -BucketName $UserdataProps.S3Bucket -Folder $UserdataProps.DistPath -KeyPrefix $UserdataProps.S3Prefix -SearchPattern *.exe
+            Write-Host "6"
         }
         Else
         {   
