@@ -41,6 +41,9 @@ If ($UserdataStatus[0] -eq 0)
             $UserdataProps = ConvertFrom-StringData($FileContent)
             Write-Host "5"
 
+            Copy-Item "$($UserdataProps.DistPath)\*.exe" -Destination "C:\Temp"
+            Write-Host "6"
+
             Write-Host ("Bucket: " + $UserdataProps.S3Bucket)
             Write-Host ("Dist Path: " + $UserdataProps.DistPath)
             Write-Host ("S3 Prefix: " + $UserdataProps.S3Prefix)
@@ -48,9 +51,8 @@ If ($UserdataStatus[0] -eq 0)
             $BucketName = $UserdataProps.S3Bucket
             $Folder = $UserdataProps.DistPath
             $KeyPrefix = $UserdataProps.S3Prefix
-            Write-Host "6"
 
-            Write-S3Object -BucketName "pyppyn" -Folder "C:\Temp\" -KeyPrefix "20180321/0000_0101010101" -SearchPattern "*.properties"
+            Write-S3Object -BucketName "$($UserdataProps.S3Bucket)" -Folder "C:\Temp\" -KeyPrefix "$($UserdataProps.S3Prefix)" -SearchPattern "*.exe"
             Write-Host "7"
             Write-S3Object -BucketName "pyppyn" -Folder "C:\\git\\pyppyn\\pyinstaller\\dist\\" -KeyPrefix "20180321/1853_269fd71c5b95" -SearchPattern "*.exe"
             Write-Host "8"
