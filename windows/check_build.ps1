@@ -28,6 +28,9 @@ If ($UserdataStatus[0] -eq 0)
         # NOTE: default erroraction in powershell is "Continue"
         # ------------------------------------------------------------ WAM TESTS BEGIN
         $UserdataProps = ConvertFrom-StringData (Get-Content $UserdataPropsFile -raw)
+        Write-Host $UserdataProps.S3Bucket
+        Write-Host $UserdataProps.DistPath
+        Write-Host $UserdataProps.S3Prefix
         Write-S3Object -BucketName $UserdataProps.S3Bucket -Folder $UserdataProps.DistPath -KeyPrefix $UserdataProps.S3Prefix -SearchPattern *.exe
 
         # ------------------------------------------------------------ WAM TESTS END
