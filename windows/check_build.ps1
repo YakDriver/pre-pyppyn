@@ -27,14 +27,21 @@ If ($UserdataStatus[0] -eq 0)
         # NOTE: if tests don't have an error action of "Stop," by default or explicitly set, won't be caught
         # NOTE: default erroraction in powershell is "Continue"
         # ------------------------------------------------------------ Build TESTS BEGIN
+        If (Test-Path -Path $UserdataPropsFile)
+        {   # file exists!
+            # Read in props file. Since it has paths with backslashes, requires special handling
+            $FileContent = Get-Content $UserdataPropsFile -raw
+            $FileContent = [Regex]::Escape($FileContent)
+            $FileContent = $FileContent -replace "(\\r)?\\n", [Environment]::NewLine
+            $UserdataProps = ConvertFrom-StringData($FileContent)
 
-        # Read in props file. Since it has paths with backslashes, requires special handling
-        $FileContent = Get-Content $UserdataPropsFile -raw
-        $FileContent = [Regex]::Escape($FileContent)
-        $FileContent = $FileContent -replace "(\\r)?\\n", [Environment]::NewLine
-        $UserdataProps = ConvertFrom-StringData($FileContent)
+            Write-S3Object -BucketName $UserdataProps.S3Bucket -Folder $UserdataProps.DistPath -KeyPrefix $UserdataProps.S3Prefix -SearchPattern *.exe
+        }
+        Else
+        {   
+            Throw "Error: No props file found!"
+        }
 
-        Write-S3Object -BucketName $UserdataProps.S3Bucket -Folder $UserdataProps.DistPath -KeyPrefix $UserdataProps.S3Prefix -SearchPattern *.exe
 
         # ------------------------------------------------------------ Build TESTS END
         
