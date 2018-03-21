@@ -2,6 +2,7 @@ Write-Host ("*******************************************************************
 Write-Host ("Running Watchmaker test script: WINDOWS")
 Write-Host ("*****************************************************************************")
 Write-Host ((Get-WmiObject -class Win32_OperatingSystem).Caption)
+Write-Host "Powershell Version: $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor)"
 
 $UserdataStatusFile = "C:\Temp\userdata_status"
 $UserdataPropsFile = "C:\Temp\pyppyn.properties"
