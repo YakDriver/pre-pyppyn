@@ -50,12 +50,14 @@ If ($UserdataStatus[0] -eq 0)
             $KeyPrefix = $UserdataProps.S3Prefix
             Write-Host "6"
 
-            Write-S3Object -BucketName "pyppyn" -Folder "C:\\git\\pyppyn\\pyinstaller\\dist" -KeyPrefix "20180321/1853_269fd71c5b95" -SearchPattern *.exe
+            Write-S3Object -BucketName "pyppyn" -Folder "C:\Temp\" -KeyPrefix "20180321/0000_0101010101" -SearchPattern "*.properties"
             Write-Host "7"
-            Write-S3Object -BucketName "pyppyn" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "20180321/1853_269fd71c5b96" -SearchPattern *.exe
+            Write-S3Object -BucketName "pyppyn" -Folder "C:\\git\\pyppyn\\pyinstaller\\dist" -KeyPrefix "20180321/1853_269fd71c5b95" -SearchPattern *.exe
             Write-Host "8"
-            Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern *.exe
+            Write-S3Object -BucketName "pyppyn" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "20180321/1853_269fd71c5b96" -SearchPattern *.exe
             Write-Host "9"
+            Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern *.exe
+            Write-Host "10"
         }
         Else
         {   
