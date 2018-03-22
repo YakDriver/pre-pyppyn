@@ -83,7 +83,6 @@ If ($UserdataStatus[0] -eq 0)
             #Write-Host "8"
             ##Write-S3Object -BucketName "pyppyn" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "20180321/1853_269fd71c5b96" -SearchPattern *.exe
             #Write-Host "9"
-            Get-ChildItem "XYZ"
             #Get-ChildItem "WSMan:\localhost\Shell"
             #Get-ChildItem "WSMan:\localhost\Shell"
             #Get-ChildItem "WSMan:\localhost\Shell"
@@ -96,9 +95,24 @@ If ($UserdataStatus[0] -eq 0)
             #Write-S3Object -BucketName $BucketName -Folder "C:\Temp" -KeyPrefix $KeyPrefix -SearchPattern "*.dat"
             #Write-Host "9"
 
-            Write-Host (Get-Date -UFormat "%Y/%m/%d %T")
-            Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern "*.exe"
+            #Write-Host (Get-Date -UFormat "%Y/%m/%d %T")
+            #Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern "*.exe"
             Write-Host "10"
+
+            $FileName = (Get-ChildItem $UserdataProps.DistPath -Include "watchmaker*.exe" -Recurse | Select -exp Name)
+            Write-Host ("Uploading $FileName...")
+
+            $WriteProps = @{
+                'BucketName' = $UserdataProps.S3Bucket                  # S3 Bucket Name
+                'Key'        = $FileName                                # Key used to identify the S3 Object
+                'File'       = "$($UserdataProps.DistPath)\$FileName"   # Local File to upload
+                'KeyPrefix'  = $UserdataProps.S3Prefix                  # Prefix for the S3 Object
+            }
+            $WriteProps
+            Write-Host "11"
+            Write-Host (Get-Date -UFormat "%Y/%m/%d %T")
+            Write-S3Object @WriteProps
+            Write-Host "12"
         }
         Else
         {   
