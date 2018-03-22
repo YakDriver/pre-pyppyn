@@ -65,7 +65,8 @@ If ($UserdataStatus[0] -eq 0)
             #Write-Host "8"
             ##Write-S3Object -BucketName "pyppyn" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "20180321/1853_269fd71c5b96" -SearchPattern *.exe
             #Write-Host "9"
-            Write-S3Object -BucketName $BucketName -Folder "\\?\$Folder" -KeyPrefix $KeyPrefix -SearchPattern *.exe
+            Start-Sleep -s 60
+            Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern "*.exe"
             Write-Host "10"
         }
         Else
