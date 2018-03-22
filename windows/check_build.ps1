@@ -104,9 +104,8 @@ If ($UserdataStatus[0] -eq 0)
 
             $WriteProps = @{
                 'BucketName' = $UserdataProps.S3Bucket                  # S3 Bucket Name
-                'Key'        = $FileName                                # Key used to identify the S3 Object
+                'Key'        = "$($UserdataProps.S3Prefix)/$FileName"   # Key used to identify the S3 Object
                 'File'       = "$($UserdataProps.DistPath)\$FileName"   # Local File to upload
-                'KeyPrefix'  = $UserdataProps.S3Prefix                  # Prefix for the S3 Object
             }
             $WriteProps
             Write-Host "11"
