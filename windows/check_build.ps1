@@ -1,3 +1,21 @@
+# Get the ID and security principal of the current user account
+$myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+$myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
+ 
+# Get the security principal for the Administrator role
+$adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+ 
+# Check to see if we are currently running "as Administrator"
+if ($myWindowsPrincipal.IsInRole($adminRole))
+   {
+    Write-Host "Running as Administrator"
+   }
+else
+   {
+    Write-Host "NOT Running as Administrator"
+   }
+
+
 Write-Host ("*****************************************************************************")
 Write-Host ("Running Watchmaker test script: WINDOWS")
 Write-Host ("*****************************************************************************")
