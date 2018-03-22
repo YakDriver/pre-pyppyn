@@ -82,6 +82,9 @@ function Test-Command
 # directory needed by logs and for various other purposes
 Invoke-Expression -Command "mkdir C:\Temp" -ErrorAction SilentlyContinue
 
+Enable-PSRemoting -Force -ErrorAction Continue
+Tfi-Out "Enable-PSRemoting -Force -ErrorAction Continue" $?
+
 # close winrm
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"false`"}" -Wait
 Tfi-Out "Set winrm/config/service/auth basic=false" $?

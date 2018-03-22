@@ -179,7 +179,7 @@ resource "aws_instance" "windows" {
   provisioner "remote-exec" {
     inline = [
       "powershell.exe -command \"$PSVersionTable\"",
-      "powershell.exe -version 3 -File C:\\scripts\\check_build.ps1",
+      "powershell.exe -File C:\\scripts\\check_build.ps1",
     ]
   }
 }

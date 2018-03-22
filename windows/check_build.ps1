@@ -65,9 +65,8 @@ If ($UserdataStatus[0] -eq 0)
             #Write-Host "8"
             ##Write-S3Object -BucketName "pyppyn" -Folder "C:\git\pyppyn\pyinstaller\dist" -KeyPrefix "20180321/1853_269fd71c5b96" -SearchPattern *.exe
             #Write-Host "9"
-            Get-Item WsMan:\Localhost\Shell\MaxMemoryPerShellMB
             Get-ChildItem WSMan:\localhost\Shell
-            
+
             $f = new-object System.IO.FileStream C:\Temp\test.dat, Create, ReadWrite
             #$f.SetLength(14.5MB) #worked
             $f.SetLength(40MB) #worked
