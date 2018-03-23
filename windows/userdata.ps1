@@ -125,6 +125,9 @@ Try {
       -GitUrl "$GitUrl" `
       -Verbose -ErrorAction Stop
 
+  Tfi-Out "Upgrade pip..."
+  Test-Command "python -m pip install --upgrade pip" -Tries 2
+  
   Tfi-Out "Installing aws-cli..."
   Test-Command "pip install awscli" -Tries 2
 
