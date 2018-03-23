@@ -125,6 +125,9 @@ Try {
       -GitUrl "$GitUrl" `
       -Verbose -ErrorAction Stop
 
+  Tfi-Out "Installing aws-cli..."
+  Test-Command "pip install awscli" -Tries 2
+
   # Clone watchmaker
   Tfi-Out "Cloning watchmaker..."
   $BaseDir = "C:\git"
@@ -160,9 +163,6 @@ Try {
   
   Tfi-Out "Installing pre-requisities for watchmaker..."
   Test-Command "pip install --index-url=`"$PypiUrl`" --upgrade pip setuptools boto3" -Tries 2
-
-  Tfi-Out "Installing aws-cli..."
-  Test-Command "pip install awscli" -Tries 2
 
   Tfi-Out "Installing watchmaker distribution..."
   cd $BaseDir\watchmaker
