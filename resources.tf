@@ -178,10 +178,7 @@ resource "aws_instance" "windows" {
 
   provisioner "remote-exec" {
     inline = [
-      #"powershell.exe -command \"$PSVersionTable\"",
-      #"powershell.exe -File C:\\scripts\\check_build.ps1",
-      "powershell.exe -Command \"Start-Process -FilePath 'powershell' -ArgumentList '-File C:\\scripts\\check-build.ps1' -Verb runAs\"",
-      "powershell.exe -Command \"Start-Sleep 120\"",
+      "powershell.exe -File C:\\scripts\\check_build.ps1",
     ]
   }
 }
