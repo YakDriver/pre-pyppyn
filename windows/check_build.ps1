@@ -97,21 +97,24 @@ If ($UserdataStatus[0] -eq 0)
 
             #Write-Host (Get-Date -UFormat "%Y/%m/%d %T")
             #Write-S3Object -BucketName $BucketName -Folder $Folder -KeyPrefix $KeyPrefix -SearchPattern "*.exe"
-            Write-Host "10"
+            #Write-Host "10"
 
+            
+
+            #$WriteProps = @{
+            #    'BucketName' = $UserdataProps.S3Bucket                  # S3 Bucket Name
+            #    'Key'        = "$($UserdataProps.S3Prefix)/$FileName"   # Key used to identify the S3 Object
+            #    'File'       = "$($UserdataProps.DistPath)\$FileName"   # Local File to upload
+            #}
+            #$WriteProps
+            #Write-Host "11"
+            Write-Host (Get-Date -UFormat "%Y/%m/%d %T")
+            #Write-S3Object @WriteProps
+            #Write-Host "12"
             $FileName = (Get-ChildItem $UserdataProps.DistPath -Include "watchmaker*.exe" -Recurse | Select -exp Name)
             Write-Host ("Uploading $FileName...")
-
-            $WriteProps = @{
-                'BucketName' = $UserdataProps.S3Bucket                  # S3 Bucket Name
-                'Key'        = "$($UserdataProps.S3Prefix)/$FileName"   # Key used to identify the S3 Object
-                'File'       = "$($UserdataProps.DistPath)\$FileName"   # Local File to upload
-            }
-            $WriteProps
-            Write-Host "11"
-            Write-Host (Get-Date -UFormat "%Y/%m/%d %T")
-            Write-S3Object @WriteProps
-            Write-Host "12"
+            aws s3 cp "$($UserdataProps.DistPath)\$FileName" "s3://$($UserdataProps.S3Bucket)/$($UserdataProps.S3Prefix)/$FileName"
+            Write-Host "13"
         }
         Else
         {   
