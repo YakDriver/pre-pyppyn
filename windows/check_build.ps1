@@ -108,6 +108,8 @@ If ($UserdataStatus[0] -eq 0)
             #}
             #$WriteProps
             #Write-Host "11"
+            Write-Host "Sleeping..."
+            Start-Sleep -s 60
             Write-Host (Get-Date -UFormat "%Y/%m/%d %T")
             #Write-S3Object @WriteProps
             #Write-Host "12"
