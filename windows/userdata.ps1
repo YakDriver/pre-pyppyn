@@ -245,7 +245,7 @@ If ($S3Keyfix.Substring($S3Keyfix.get_Length()-2) -eq 'Da') {
 
 $ArtifactPrefix = "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$S3Keyfix"
 Tfi-Out "Copying executable to $ArtifactPrefix"
-Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "$BaseDir\pyppyn\pyinstaller\dist" -KeyPrefix ""${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}" -SearchPattern "*.exe"
+Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "$BaseDir\pyppyn\pyinstaller\dist" -KeyPrefix "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}" -SearchPattern "*.exe"
 
 Tfi-Out "Writing logs to $ArtifactPrefix"
 Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Log" -KeyPrefix "$ArtifactPrefix/cloud/"
