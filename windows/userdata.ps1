@@ -111,7 +111,9 @@ Try {
   $HotfixUrl = "https://hotfixv4.trafficmanager.net/Windows%207/Windows%20Server2008%20R2%20SP1/sp2/Fix467402/7600/free/463983_intl_i386_zip.exe"
   (New-Object System.Net.WebClient).DownloadFile($HotfixUrl, "C:\Temp\hotfix.exe")
   Tfi-Out "Download hotfix" $?
-  Get-Item "C:\Temp\hotfix.exe" | %{Expand-ZipFile -FilePath $_.FullName -OutputPath c:\hotfixes}
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  Get-Item "C:\Temp\hotfix.exe" | %{[System.IO.Compression.ZipFile]::ExtractToDirectory($_.FullName, "c:\hotfixes")
+  #Get-Item "C:\Temp\hotfix.exe" | %{Expand-ZipFile -FilePath $_.FullName -OutputPath "c:\hotfixes"}
   Tfi-Out "Unzip hotfix" $?
   Get-Item c:\hotfixes\* | foreach {WUSA ""$_.FullName /quiet /norestart"";while(get-process wusa){Write-Host "Installing $_.Name"}}
   Tfi-Out "Install hotfix" $?
