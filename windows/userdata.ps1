@@ -105,13 +105,21 @@ Try {
 
   Tfi-Out "Security protocol before bootstrap: $([Net.ServicePointManager]::SecurityProtocol | Out-String)"
 
+  # Use TLS, as git won't do SSL now
+  [Net.ServicePointManager]::SecurityProtocol = "Ssl3, Tls, Tls11, Tls12"
+
+  $HotfixUrl = "https://hotfixv4.trafficmanager.net/Windows%207/Windows%20Server2008%20R2%20SP1/sp2/Fix467402/7600/free/463983_intl_i386_zip.exe"
+  (New-Object System.Net.WebClient).DownloadFile($HotfixUrl, "C:\Temp\hotfix.exe")
+  Tfi-Out "Download hotfix" $?
+  Get-Item "C:\Temp\hotfix.exe" | %{Expand-ZipFile -FilePath $_.FullName -OutputPath c:\hotfixes}
+  Tfi-Out "Unzip hotfix" $?
+  Get-Item c:\hotfixes\* | foreach {WUSA ""$_.FullName /quiet /norestart"";while(get-process wusa){Write-Host "Installing $_.Name"}}
+  Tfi-Out "Install hotfix" $?
+
   $BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/bootstrap/watchmaker-bootstrap.ps1"
   $PythonUrl = "https://www.python.org/ftp/python/3.6.4/python-3.6.4-amd64.exe"
   $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.16.2.windows.1/Git-2.16.2-64-bit.exe"
   $PypiUrl = "https://pypi.org/simple"
-
-  # Use TLS, as git won't do SSL now
-  [Net.ServicePointManager]::SecurityProtocol = "Ssl3, Tls, Tls11, Tls12"
 
   # Download bootstrap file
   $Stage = "download bootstrap"
