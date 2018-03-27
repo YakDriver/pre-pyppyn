@@ -186,7 +186,9 @@ Try {
   Test-Command "pip install --index-url=`"$PypiUrl`" --editable ."
 
   Tfi-Out "Install pyinstaller..."
-  Test-Command "pip3 install --upgrade pyinstaller pyyaml backoff six click pypiwin32 defusedxml packaging"
+  Test-Command "pip3 install --upgrade pyinstaller packaging"
+  
+  Test-Command "pip3 install --upgrade pyyaml backoff six click pypiwin32 defusedxml"
 
   Tfi-Out "Verifying installation..."
   If(Test-Path -Path "$VenvBin\watchmaker-script.py")

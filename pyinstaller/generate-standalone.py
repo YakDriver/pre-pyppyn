@@ -6,7 +6,15 @@ import sys
 
 from watchmaker import __version__ as wam_version
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+def install_and_import(package):
+    import importlib
+    try:
+        importlib.import_module(package)
+    except ImportError:
+        import pip
+        pip.main(['install', package])
+    finally:
+        globals()[package] = importlib.import_module(package)
 
 if __name__ == '__main__':
     operating_system = platform.system()
