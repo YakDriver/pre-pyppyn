@@ -100,6 +100,9 @@ Tfi-Out "Set winrm timeout" $?
 Start-Sleep -s 60
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
 Tfi-Out "Set winrm/config/service/auth basic=true" $?
+# open the firewall
+netsh advfirewall firewall add rule name="WinRM in" protocol=tcp dir=in profile=any localport=5985 remoteip=any localip=any action=allow
+Tfi-Out "Open firewall" $?
 
 <#
 # Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
