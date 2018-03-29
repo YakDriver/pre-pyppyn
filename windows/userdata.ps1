@@ -1,5 +1,6 @@
 <powershell>
 
+
 $ErrorActionPreference = "Continue"
 
 function Tfi-Out
@@ -79,6 +80,28 @@ function Test-Command
   }
 }
 
+# Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
+$Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
+$Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
+Tfi-Out "Set admin (${tfi_rm_user}) password (${tfi_rm_pass})" $?
+
+Enable-PSRemoting -Force -ErrorAction Continue
+Tfi-Out "Enable-PSRemoting -Force -ErrorAction Continue" $?
+
+# initial winrm setup
+Start-Process -FilePath "winrm" -ArgumentList "quickconfig -q"
+Tfi-Out "WinRM quickconfig" $?
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
+Tfi-Out "Set winrm/config/service allowunencrypted=true" $?
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
+Tfi-Out "Set winrm/config/service/auth basic=true" $?
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}"
+Tfi-Out "Set winrm timeout" $?
+Start-Sleep -s 60
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
+Tfi-Out "Set winrm/config/service/auth basic=true" $?
+
+<#
 # Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
 $Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
 $Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
@@ -263,4 +286,5 @@ Tfi-Out "Set winrm/config/service/auth basic=true" $?
 
 Write-S3Object -BucketName "${tfi_s3_bucket}/$ArtifactPrefix" -File "${tfi_win_userdata_log}"
 
+#>
 </powershell>
