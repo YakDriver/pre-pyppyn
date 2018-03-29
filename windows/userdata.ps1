@@ -79,6 +79,11 @@ function Test-Command
   }
 }
 
+# Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
+$Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
+$Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
+Tfi-Out "Set admin (${tfi_rm_user}) password (${tfi_rm_pass})" $?
+
 # directory needed by logs and for various other purposes
 Invoke-Expression -Command "mkdir C:\Temp" -ErrorAction SilentlyContinue
 
