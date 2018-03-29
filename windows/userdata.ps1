@@ -89,13 +89,13 @@ Enable-PSRemoting -Force -ErrorAction Continue
 Tfi-Out "Enable-PSRemoting -Force -ErrorAction Continue" $?
 
 # initial winrm setup
-Start-Process -FilePath "winrm" -ArgumentList "quickconfig -q"
+Start-Process -FilePath "winrm" -ArgumentList "quickconfig -q" -Wait
 Tfi-Out "WinRM quickconfig" $?
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
 Tfi-Out "Set winrm/config/service allowunencrypted=true" $?
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
 Tfi-Out "Set winrm/config/service/auth basic=true" $?
-Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}"
+Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}" -Wait
 Tfi-Out "Set winrm timeout" $?
 Start-Sleep -s 60
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
