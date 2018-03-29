@@ -26,6 +26,14 @@ function Tfi-Out
   }
   
   "$(Get-Date): $Msg $OutResult" | Out-File "${tfi_win_userdata_log}" -Append -Encoding utf8
+
+  # upload logs to S3 bucket
+  $S3Keyfix="Win" + (((Get-WmiObject -class Win32_OperatingSystem).Caption) -replace '.+(\d\d)\s(.{2}).+','$1$2')
+  If ($S3Keyfix.Substring($S3Keyfix.get_Length()-2) -eq 'Da') {
+    $S3Keyfix=$S3Keyfix -replace ".{2}$"
+  }
+  $ArtifactPrefix = "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$S3Keyfix"
+  Write-S3Object -BucketName "${tfi_s3_bucket}/$ArtifactPrefix" -File "${tfi_win_userdata_log}"
 }
 
 function Test-Command
@@ -97,12 +105,16 @@ Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{B
 Tfi-Out "Set winrm/config/service/auth basic=true" $?
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}" -Wait
 Tfi-Out "Set winrm timeout" $?
-Start-Sleep -s 60
 Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
 Tfi-Out "Set winrm/config/service/auth basic=true" $?
 # open the firewall
 netsh advfirewall firewall add rule name="WinRM in" protocol=tcp dir=in profile=any localport=5985 remoteip=any localip=any action=allow
 Tfi-Out "Open firewall" $?
+
+# Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
+$Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
+$Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
+Tfi-Out "Set admin (${tfi_rm_user}) password (${tfi_rm_pass})" $?
 
 <#
 # Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
