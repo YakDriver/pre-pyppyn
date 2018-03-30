@@ -93,35 +93,6 @@ $Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
 $Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
 Tfi-Out "Set admin (${tfi_rm_user}) password (${tfi_rm_pass})" $?
 
-Enable-PSRemoting -Force -ErrorAction Continue
-Tfi-Out "Enable-PSRemoting -Force -ErrorAction Continue" $?
-
-# initial winrm setup
-Start-Process -FilePath "winrm" -ArgumentList "quickconfig -q" -Wait
-Tfi-Out "WinRM quickconfig" $?
-Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service @{AllowUnencrypted=`"true`"}" -Wait
-Tfi-Out "Set winrm/config/service allowunencrypted=true" $?
-Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
-Tfi-Out "Set winrm/config/service/auth basic=true" $?
-Start-Process -FilePath "winrm" -ArgumentList "set winrm/config @{MaxTimeoutms=`"1900000`"}" -Wait
-Tfi-Out "Set winrm timeout" $?
-Start-Process -FilePath "winrm" -ArgumentList "set winrm/config/service/auth @{Basic=`"true`"}" -Wait
-Tfi-Out "Set winrm/config/service/auth basic=true" $?
-# open the firewall
-netsh advfirewall firewall add rule name="WinRM in" protocol=tcp dir=in profile=any localport=5985 remoteip=any localip=any action=allow
-Tfi-Out "Open firewall" $?
-
-# Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
-$Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
-$Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
-Tfi-Out "Set admin (${tfi_rm_user}) password (${tfi_rm_pass})" $?
-
-<#
-# Set Administrator password, for logging in before wam changes Administrator account name to ${tfi_rm_user}
-$Admin = [adsi]("WinNT://./${tfi_rm_user}, user")
-$Admin.psbase.invoke("SetPassword", "${tfi_rm_pass}")
-Tfi-Out "Set admin (${tfi_rm_user}) password (${tfi_rm_pass})" $?
-
 # directory needed by logs and for various other purposes
 Invoke-Expression -Command "mkdir C:\Temp" -ErrorAction SilentlyContinue
 
@@ -289,8 +260,8 @@ If ($S3Keyfix.Substring($S3Keyfix.get_Length()-2) -eq 'Da') {
 }
 
 $ArtifactPrefix = "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}/$S3Keyfix"
-Tfi-Out "Copying executable to $ArtifactPrefix"
-Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "$BaseDir\pyppyn\pyinstaller\dist" -KeyPrefix "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}" -SearchPattern "*.exe"
+#Tfi-Out "Copying executable to $ArtifactPrefix"
+#Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "$BaseDir\pyppyn\pyinstaller\dist" -KeyPrefix "${tfi_build_date}/${tfi_build_hour}_${tfi_build_id}" -SearchPattern "*.exe"
 
 Tfi-Out "Writing logs to $ArtifactPrefix"
 Write-S3Object -BucketName "${tfi_s3_bucket}" -Folder "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Log" -KeyPrefix "$ArtifactPrefix/cloud/"
@@ -301,5 +272,4 @@ Tfi-Out "Set winrm/config/service/auth basic=true" $?
 
 Write-S3Object -BucketName "${tfi_s3_bucket}/$ArtifactPrefix" -File "${tfi_win_userdata_log}"
 
-#>
 </powershell>
