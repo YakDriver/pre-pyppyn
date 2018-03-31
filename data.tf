@@ -18,7 +18,7 @@ data "http" "ip" {
 
 # Template for initial configuration bash script
 data "template_file" "win_userdata" {
-  template = "${file("windows/userdata.ps1")}"
+  template = "${file("windows/userdata2.ps1")}"
 
   vars {
     tfi_git_repo         = "${var.tfi_git_repo}"
