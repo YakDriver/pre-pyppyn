@@ -17,13 +17,15 @@ phases:
       - export TF_VAR_tfi_codebuild_id="${CODEBUILD_BUILD_ID}"
       - ./terraform init -no-color -input=false                                 # init terraform
       - ./terraform plan -no-color -out=tfplan -input=false                     # plan terraform
+      - ARTIFACT_PATH="${TF_VAR_tfi_s3_bucket}/$(./terraform output build_date_ymd)/$(./terraform output build_date_hm)_$(./terraform output build_id)"
+      - echo "ARTIFACT_LOCATION=https://s3.console.aws.amazon.com/s3/buckets/${ARTIFACT_PATH}/"
+      - ./terraform output private_key | aws s3 cp - "s3://${ARTIFACT_PATH}/temp_key.pem" || true
   build:
     commands:
       - ./terraform apply -no-color -input=false tfplan                         # apply terraform
   post_build:
     commands:
       - ARTIFACT_PATH="${TF_VAR_tfi_s3_bucket}/$(./terraform output build_date_ymd)/$(./terraform output build_date_hm)_$(./terraform output build_id)"
-      - echo "ARTIFACT_LOCATION=https://s3.console.aws.amazon.com/s3/buckets/${ARTIFACT_PATH}/"
       - ./terraform output private_key | aws s3 cp - "s3://${ARTIFACT_PATH}/temp_key.pem" || true
       - ./terraform output | aws s3 cp - "s3://${ARTIFACT_PATH}/terraform_output.log" || true
       - test -r $TF_LOG_PATH && aws s3 cp $TF_LOG_PATH "s3://${ARTIFACT_PATH}/terraform.log" || true

@@ -34,8 +34,10 @@ If(-Not Test-Path -Path $StateFile)
   $Xml.Save($EC2SettingsFile)
 
   # Download and install hotfix
-  (New-Object System.Net.WebClient).DownloadFile("https://hotfixv4.trafficmanager.net/Windows%207/Windows%20Server2008%20R2%20SP1/sp2/Fix467402/7600/free/463984_intl_x64_zip.exe", "C:\hotfix\KB2842230.exe")
-  & C:\hotfix\KB2842230.exe /quiet
+  $DownloadUrl = "https://hotfixv4.trafficmanager.net/Windows%207/Windows%20Server2008%20R2%20SP1/sp2/Fix467402/7600/free/463984_intl_x64_zip.exe"
+  $HotfixFile = "C:\hotfix\KB2842230.exe"
+  (New-Object System.Net.WebClient).DownloadFile($DownloadUrl, $HotfixFile)
+  & "$HotfixFile" /quiet
 }
 Else 
 {
