@@ -1,6 +1,6 @@
 <powershell>
 $StateFile = "C:\Temp\userdata_state.txt"
-If(-Not Test-Path -Path $StateFile)
+If(-Not (Test-Path -Path $StateFile))
 {
   # PHASE 1
 
