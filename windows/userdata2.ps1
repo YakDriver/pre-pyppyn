@@ -43,7 +43,8 @@ If(-Not (Test-Path -Path $StateFile))
   [System.IO.Compression.ZipFile]::ExtractToDirectory($HotfixFile, $HotfixDir)
   
   # Install 
-  Get-Item "$HotfixDir\*.msu" | Foreach {WUSA ""$_.FullName /quiet /norestart""}
+  #Get-Item "$HotfixDir\*.msu" | Foreach {WUSA ""$_.FullName /quiet /norestart"" ; While(Get-Process "wusa.exe") { Start-Sleep -s 1 } }
+  Get-Item "$HotfixDir\*.msu" | Foreach { Start-Process "wusa.exe" -ArgumentList "/update `"$_.FullName`" /quiet /restart" -Wait }
 
   # Reboot
   Restart-Computer
