@@ -44,7 +44,7 @@ If(-Not (Test-Path -Path $StateFile))
   
   # Install 
   #Get-Item "$HotfixDir\*.msu" | Foreach {WUSA ""$_.FullName /quiet /norestart"" ; While(Get-Process "wusa.exe") { Start-Sleep -s 1 } }
-  Get-Item "$HotfixDir\*.msu" | Foreach { Start-Process "wusa.exe" -ArgumentList "/update `"$_.FullName`" /quiet /restart" -Wait }
+  Get-Item "$HotfixDir\*.msu" | Foreach { Start-Process "wusa.exe" -ArgumentList "/update `"$_.FullName`" /quiet /norestart" -Wait }
 
   # Reboot
   Restart-Computer
