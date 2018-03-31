@@ -7,7 +7,7 @@ $f = new-object System.IO.FileStream C:\Temp\test.dat, Create, ReadWrite
 $f.SetLength(40MB) #if this is reduced to 14MB, it works
 $f.Close()
 Write-Host (Get-Date -UFormat "%Y/%m/%d %T")
-Write-S3Object -BucketName "pyppyn" -Folder "C:\Temp" -KeyPrefix "20180332" -SearchPattern "*.dat"
+Write-S3Object -BucketName "pyppyn" -Folder "C:\Temp" -KeyPrefix "20180333" -SearchPattern "*.dat"
 
 $UserdataStatusFile = "C:\Temp\userdata_status"
 $UserdataPropsFile = "C:\Temp\pyppyn.properties"

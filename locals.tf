@@ -20,8 +20,8 @@ locals {
   }
 
   win_amis = {
-    #"win08"       = "${data.aws_ami.windows2008.id}"
-    "win08"       = "ami-08c28398e736ccf8d"
+    "win08"       = "${data.aws_ami.windows2008.id}"
+    #"win08"       = "ami-08c28398e736ccf8d"
     "win12"       = "${data.aws_ami.windows2012.id}"
     "win16"       = "${data.aws_ami.windows2016.id}"
   }
