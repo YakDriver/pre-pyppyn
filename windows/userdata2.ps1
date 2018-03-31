@@ -34,10 +34,23 @@ If(-Not (Test-Path -Path $StateFile))
   $Xml.Save($EC2SettingsFile)
 
   # Download and install hotfix
+  
+  # Download self-extractor
   $DownloadUrl = "https://hotfixv4.trafficmanager.net/Windows%207/Windows%20Server2008%20R2%20SP1/sp2/Fix467402/7600/free/463984_intl_x64_zip.exe"
-  $HotfixFile = "C:\hotfix\KB2842230.exe"
+  $HotfixDir = "C:\hotfix"
+  $HotfixFile = "$HotfixDir\KB2842230.exe"
+  mkdir $HotfixDir
   (New-Object System.Net.WebClient).DownloadFile($DownloadUrl, $HotfixFile)
-  & "$HotfixFile" /quiet
+  
+  # Extract self-extractor
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  [System.IO.Compression.ZipFile]::ExtractToDirectory($HotfixFile, $HotfixDir)
+  
+  # Install 
+  Get-Item "$HotfixDir\*.msu" | Foreach {WUSA ""$_.FullName /quiet /norestart""}
+
+  # Reboot
+  Restart-Computer
 }
 Else 
 {
