@@ -22,11 +22,7 @@ If(-Not (Test-Path -Path $StateFile))
   
   Foreach ($Element in $XmlElementToModify.Plugin)
   {
-      If ($Element.name -eq "Ec2SetPassword")
-      {
-          $Element.State="Enabled"
-      }
-      Elseif ($Element.name -eq "Ec2HandleUserData")
+      If ($Element.name -eq "Ec2HandleUserData")
       {
           $Element.State="Enabled"
       }
